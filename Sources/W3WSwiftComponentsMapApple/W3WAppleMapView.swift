@@ -11,7 +11,7 @@ import W3WSwiftComponentsMap
 
 
 /// An Apple Map Kit Map
-public class W3WAppleMapView: MKMapView, W3WMapViewProtocol, W3WEventSubscriberProtocol, MKMapViewDelegate {
+public class W3WAppleMapView: MKMapView, W3WEventSubscriberProtocol {
   public var subscriptions = W3WEventsSubscriptions()
 
   /// The map view model to use
@@ -20,6 +20,7 @@ public class W3WAppleMapView: MKMapView, W3WMapViewProtocol, W3WEventSubscriberP
   /// The available map types
   public var types: [W3WMapType] { get { return [.standard, .satellite, .hybrid, "silly"] } }
   
+  var helper: W3WAppleMapHelperProtocol!
 
   /// Make an Apple Map Kit Map
   /// - Parameters
@@ -27,6 +28,8 @@ public class W3WAppleMapView: MKMapView, W3WMapViewProtocol, W3WEventSubscriberP
   public init(viewModel: W3WMapViewModelProtocol) {
     self.viewModel = viewModel
     super.init(frame: .w3wWhatever)
+    
+    self.helper = W3WAppleMapHelper(mapView: view as! MKMapView)
   }
   
   
@@ -51,6 +54,20 @@ public class W3WAppleMapView: MKMapView, W3WMapViewProtocol, W3WEventSubscriberP
   /// - Parameters
   ///     - type: A string type from the array `self.types`
   public func set(type: String) {
+  }
+  
+  
+  func bind() {
+    
+    subscribe(to: viewModel.mapState.markers) { markers in
+      helper.removeAllMarkers()
+      for (name, list) in markers.lists {
+        for marks in list.markers {
+          helper.addMarker(at: marks, camera: .none, color: list.color?.current.uiColor)
+        }
+      }
+    }
+    
   }
   
 }
