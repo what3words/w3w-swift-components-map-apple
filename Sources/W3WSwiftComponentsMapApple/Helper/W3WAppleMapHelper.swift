@@ -284,9 +284,8 @@ public extension W3WAppleMapHelper {
     let squareSize = getPointsPerSquare()
 
     if let selectedSquare = selectedSquare {
-      //annotations
-      if squareSize > self.mapGridData?.pointsPerSquare ?? CGFloat(12.0) {
-        
+   //   if(annotations.count != 0 && squares?.count == 0) {
+      if squareSize < self.mapGridData?.pointsPerSquare ?? CGFloat(12.0) {
         if (annotation?.isMarker == true && annotation?.isMark == false ) { //check the previous annotation is square
           let previousBoxId = selectedSquare.bounds?.id
           

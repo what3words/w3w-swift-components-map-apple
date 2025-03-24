@@ -493,7 +493,7 @@ extension W3WAppleMapGridDrawingProtocol {
     if case .square = annotation.type {
       pinImage = W3WImage(drawing: .mapPin, colors: .standardMaps.with(background: color))
         .get(size: W3WIconSize(value: CGSize(width: (mapGridData?.pinSize ??  CGFloat(40.0)) / 2.0  , height: (mapGridData?.pinSize ?? CGFloat(40.0)) / 2.0)))
-      centerOffset = CGPoint(x: 0.0, y: (-10))
+      centerOffset = CGPoint(x: 0.0, y: (-5))
     }
     
     
