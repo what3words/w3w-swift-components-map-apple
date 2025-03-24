@@ -1,13 +1,13 @@
 {
-  "originHash" : "2d2ff9066c4dc07bb0a0d8e58d69518e67d94b8d4e3545ed8609ccc5deddf020",
+  "originHash" : "7c1690b067e4e0d940b96b74d150a0946e164fc0e6c3147a12b94185d8604f33",
   "pins" : [
     {
-      "identity" : "w3w-swift-components-map",
+      "identity" : "w3w-swift-components",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:what3words/w3w-swift-components-map.git",
+      "location" : "https://github.com/what3words/w3w-swift-components.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "c311d5682e05f87a910955a8acc78a2e1104ee67"
+        "revision" : "6ed04be4011d86642d1f8b9bbab8ac118bedbd86",
+        "version" : "3.0.0"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/what3words/w3w-swift-core.git",
       "state" : {
-        "revision" : "598fc648928208d9f0268680ce15b686329d12f9",
-        "version" : "1.1.2"
+        "revision" : "5e81cb99e3424d0de58e5c3df12716b834a44685",
+        "version" : "1.1.3"
       }
     },
     {
@@ -35,6 +35,24 @@
       "state" : {
         "revision" : "718555fc83d5745724a222c6ba39add74e0d345e",
         "version" : "1.2.2"
+      }
+    },
+    {
+      "identity" : "w3w-swift-voice-api",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/what3words/w3w-swift-voice-api.git",
+      "state" : {
+        "revision" : "fa5849ae926e1b5f85198ca3d4d52ae2c9446cd5",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "w3w-swift-wrapper",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/what3words/w3w-swift-wrapper",
+      "state" : {
+        "branch" : "master",
+        "revision" : "3c01152aa316b7a9714f038b34a8adb4adeb7c4a"
       }
     }
   ],
