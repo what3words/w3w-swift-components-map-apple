@@ -157,41 +157,41 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     
     w3wHelper.addMarker(at: "intervene.cities.bachelor", color: .w3wBrandBase, type: .circle)//
     w3wHelper.addMarker(at: "outgrown.onions.marathon", color: .brown, type: .circle)//
-//    w3wHelper.addMarker(at: "gums.tulip.impulsive", color: .cranberry, type: .circle)//
-//    w3wHelper.addMarker(at: "dugouts.flaking.pleasing", color: .brightGreen, type: .circle)//
-//    w3wHelper.addMarker(at: "humans.stags.insulated", color: .darkGreen, type: .circle) //
-//    w3wHelper.addMarker(at: "melts.luggage.cuter", color: .systemPurple, type: .circle) ////
-//    w3wHelper.addMarker(at: "described.enforced.prude", color: .red , type: .circle)
-//    w3wHelper.addMarker(at: "bleaching.urgent.heartache", color: .aqua, type: .circle)//
-//   w3wHelper.addMarker(at: "allowable.realm.crafted", color: .lightCyan, type: .circle)//
-//    w3wHelper.addMarker(at: "admire.couch.celebrate", color: .aqua, type: .circle)//
-//    w3wHelper.addMarker(at: "listen.searching.reviews", color: .charcoal, type: .circle)//
-//    w3wHelper.addMarker(at: "vaulting.lasts.birthing", color: .dullRed, type: .circle)//
-//    w3wHelper.addMarker(at: "sleeping.beanbag.contour", color: .darkBlue , type: .circle)//
-//    w3wHelper.addMarker(at: "described.enforced.prude", color: .red , type: .circle)//
-//    w3wHelper.addMarker(at: "often.opts.blushes", color: .darkBlueAlpha60, type: .circle)//
-//    w3wHelper.addMarker(at: "skinny.bound.reclusive", color: .w3wSuccessLabelDark, type: .circle)//
-//    w3wHelper.addMarker(at: "segregate.unwraps.majors", color: .mustard, type: .circle)//
-//    w3wHelper.addMarker(at: "losses.pheasants.eagle", color: .systemYellow, type: .circle)
-//    w3wHelper.addMarker(at: "protected.nylon.will", color: .w3wErrorBase, type: .circle)//
-//    w3wHelper.addMarker(at: "majors.supplier.playing", color: .brown, type: .circle)//
-//    w3wHelper.addMarker(at: "legend.milkman.upholding", color: .blue, type: .circle)//
-//    w3wHelper.addMarker(at: "unsecured.slugs.unveils", color: .secondary, type: .circle)//
-//    w3wHelper.addMarker(at: "towers.oiled.dentures", color: .yellow, type: .circle)//
-//    w3wHelper.addMarker(at: "intervene.cities.bachelor", color: .purple, type: .circle)//
-//    w3wHelper.addMarker(at: "gladiators.surface.eyeliner", color: .purple, type: .circle)//
-//    w3wHelper.addMarker(at: "attaching.things.global", color: .purple, type: .circle)//
-//    
-//    w3wHelper.addMarker(at: "nipped.concluded.fabric", color: .w3wErrorBase, type: .circle)//
-//    w3wHelper.addMarker(at: "slept.beakers.amuses", color: .brown, type: .circle)//
-//    
-//    w3wHelper.addMarker(at: "deflation.dollar.purple", color: .darkBlue , type: .circle)//
-//    w3wHelper.addMarker(at: "croutons.approve.drew", color: .red , type: .circle)//
-//    w3wHelper.addMarker(at: "musically.storms.smirks", color: .darkBlueAlpha60, type: .circle)//
-//    w3wHelper.addMarker(at: "dissolves.discloses.voting", color: .w3wSuccessLabelDark, type: .circle)//
-//    w3wHelper.addMarker(at: "trading.yachting.wrong", color: .mustard, type: .circle)//
+  //  w3wHelper.addMarker(at: "gums.tulip.impulsive", color: .cranberry, type: .circle)//
+    w3wHelper.addMarker(at: "dugouts.flaking.pleasing", color: .brightGreen, type: .circle)//
+    w3wHelper.addMarker(at: "humans.stags.insulated", color: .darkGreen, type: .circle) //
+    w3wHelper.addMarker(at: "melts.luggage.cuter", color: .systemPurple, type: .circle) ////
+    w3wHelper.addMarker(at: "described.enforced.prude", color: .red , type: .circle)
+    w3wHelper.addMarker(at: "bleaching.urgent.heartache", color: .aqua, type: .circle)//
+   w3wHelper.addMarker(at: "allowable.realm.crafted", color: .lightCyan, type: .circle)//
+    w3wHelper.addMarker(at: "admire.couch.celebrate", color: .aqua, type: .circle)//
+    w3wHelper.addMarker(at: "listen.searching.reviews", color: .charcoal, type: .circle)//
+    w3wHelper.addMarker(at: "vaulting.lasts.birthing", color: .dullRed, type: .circle)//
+    w3wHelper.addMarker(at: "sleeping.beanbag.contour", color: .darkBlue , type: .circle)//
+    w3wHelper.addMarker(at: "described.enforced.prude", color: .red , type: .circle)//
+    w3wHelper.addMarker(at: "often.opts.blushes", color: .darkBlueAlpha60, type: .circle)//
+    w3wHelper.addMarker(at: "skinny.bound.reclusive", color: .w3wSuccessLabelDark, type: .circle)//
+    w3wHelper.addMarker(at: "segregate.unwraps.majors", color: .mustard, type: .circle)//
+    w3wHelper.addMarker(at: "losses.pheasants.eagle", color: .systemYellow, type: .circle)
+    w3wHelper.addMarker(at: "protected.nylon.will", color: .w3wErrorBase, type: .circle)//
+    w3wHelper.addMarker(at: "majors.supplier.playing", color: .brown, type: .circle)//
+    w3wHelper.addMarker(at: "legend.milkman.upholding", color: .blue, type: .circle)//
+    w3wHelper.addMarker(at: "unsecured.slugs.unveils", color: .secondary, type: .circle)//
+    w3wHelper.addMarker(at: "towers.oiled.dentures", color: .yellow, type: .circle)//
+    w3wHelper.addMarker(at: "intervene.cities.bachelor", color: .purple, type: .circle)//
+    w3wHelper.addMarker(at: "gladiators.surface.eyeliner", color: .purple, type: .circle)//
+    w3wHelper.addMarker(at: "attaching.things.global", color: .purple, type: .circle)//
     
+    w3wHelper.addMarker(at: "nipped.concluded.fabric", color: .w3wErrorBase, type: .circle)//
+    w3wHelper.addMarker(at: "slept.beakers.amuses", color: .brown, type: .circle)//
     
+    w3wHelper.addMarker(at: "deflation.dollar.purple", color: .darkBlue , type: .circle)//
+    w3wHelper.addMarker(at: "croutons.approve.drew", color: .red , type: .circle)//
+    w3wHelper.addMarker(at: "musically.storms.smirks", color: .darkBlueAlpha60, type: .circle)//
+    w3wHelper.addMarker(at: "dissolves.discloses.voting", color: .w3wSuccessLabelDark, type: .circle)//
+    w3wHelper.addMarker(at: "trading.yachting.wrong", color: .mustard, type: .circle)//
+    
+    w3wHelper.addMarker(at: "convert.universal.subject", color: .mustard, type: .circle)//
     let coordinate = CLLocationCoordinate2D(
       latitude: 10.780468,
       longitude: 106.705438
@@ -293,10 +293,9 @@ extension W3WAppleMapView: MKMapViewDelegate {
     if currentMapScale.value > transitionScale.value {
       //update map
     }
-    print("zoomlevel - mapscale: \(self.zoomLevel) \(currentMapScale.value)")
     w3wHelper.mapViewDidChangeVisibleRegion(mapView)
     viewModel.output.send(.camera(getCameraState()))
-    
+
   }
 
   public func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {

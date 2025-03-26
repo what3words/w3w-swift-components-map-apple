@@ -75,13 +75,13 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapGridDrawingProtocol, W3WApp
   
   func setGridColor() {
     if let gridData = mapGridData {
-      gridData.mapGridColor.send(mapType == .standard ? .mediumGrey : .white)
+      gridData.mapGridColor.send(mapType == .standard ? .red : .white)
     }
   }
   
   func setGridLine() {
     if let gridData = mapGridData {
-      gridData.mapGridLineThickness.send(2.0)
+      gridData.mapGridLineThickness.send(4.0)
     }
   }
   
@@ -197,7 +197,55 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapGridDrawingProtocol, W3WApp
   }
   
   public func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
-    
+      // Maintain a dictionary of positions by section
+      var positionsBySection = [String: [CGPoint]]()
+      
+      // Minimum distance between pins in points
+      let minDistance: CGFloat = 5.0
+      
+      for view in views {
+          guard let annotation = view.annotation as? W3WAppleMapAnnotation else { continue }
+          
+          // Create a section key based on annotation's location
+          // Round to nearest grid to group nearby pins
+          let gridSize: Double = 0.0001 // Adjust based on your needs
+          let latSection = Int((annotation.square?.coordinates!.latitude ?? 0) / gridSize)
+          let lngSection = Int(annotation.square?.coordinates!.longitude ?? 0 / gridSize)
+          let sectionKey = "\(latSection)_\(lngSection)"
+          
+          // Get current center point for this view
+          let center = view.center
+          
+          // Get existing positions in this section
+          var positions = positionsBySection[sectionKey] ?? []
+          
+          // Check if this position is too close to existing ones
+          var needsAdjustment = false
+          for existingPos in positions {
+              let distance = hypot(center.x - existingPos.x, center.y - existingPos.y)
+              if distance < minDistance {
+                  needsAdjustment = true
+                  break
+              }
+          }
+          
+          // If too close, apply a small offset
+          if needsAdjustment {
+              // Calculate offset direction (try to avoid overlaps)
+              let offsetX = CGFloat(arc4random_uniform(2) == 0 ? -1 : 1) * minDistance * 0.7
+              let offsetY = CGFloat(arc4random_uniform(2) == 0 ? -1 : 1) * minDistance * 0.7
+              
+              // Apply offset
+              view.centerOffset = CGPoint(
+                  x: view.centerOffset.x + offsetX,
+                  y: view.centerOffset.y + offsetY
+              )
+          }
+          
+          // Add this position to our tracking dictionary
+          positions.append(view.center)
+          positionsBySection[sectionKey] = positions
+      }
   }
   
 }
@@ -232,42 +280,10 @@ public extension W3WAppleMapHelper {
   }
   
   func select(at: W3WSquare) {
-    createMarkerForCondition(at: at)
-  
-    //sample code to update markers
-   // let markersList = W3WMarkersLists(defaultColor: .w3wBrandBase)
-  //  markersList.add(listName: "favorites", color: .w3wBrandBase)
-  //  markersList.add(square: at, listName: "favorites")
-    
-  //  self.mapGridData?.savedList = markersList
-    
-   // completion(markersList)
-    ///Sample code to add
-    
-//    var randomColors: [W3WColor] = []
-//    
-//    for _ in 0..<10 {
-//        let red = CGFloat.random(in: 0...1)
-//        let green = CGFloat.random(in: 0...1)
-//        let blue = CGFloat.random(in: 0...1)
-//        let uiColor = UIColor(red: red, green: green, blue: blue, alpha: 1.0)
-//        let randomColor = W3WColor(uiColor: uiColor)
-//      
-//      randomColors.append(randomColor)
-//    }
-//    
-//    let randomIndex = Int.random(in: 0..<randomColors.count)
-//    
-//    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-//      
-//      guard let self = self else { return }
-//      removeMarker(at: selectedSquare)
-//      addSelectedMarker(at: at, color: randomColors[randomIndex], type: .square, isMarker: false, isMark: false)
-//    }
-
+    createMarkerForConditions(at: at)
  }
   
-  func createMarkerForCondition(at: W3WSquare) {
+  func createMarkerForConditions(at: W3WSquare) {
     
     var squares = self.mapGridData?.squares
     
@@ -277,14 +293,13 @@ public extension W3WAppleMapHelper {
     
     let  isPrevMarkerinList =  squares?.contains(where: { $0.bounds?.id ==  selectedSquare?.bounds?.id })
     
-    let annotation = self.findAnnotation(selectedSquare)
+    let annotation = findAnnotation(selectedSquare)
     
     let markers =  self.mapGridData?.markers
     
     let squareSize = getPointsPerSquare()
 
     if let selectedSquare = selectedSquare {
-   //   if(annotations.count != 0 && squares?.count == 0) {
       if squareSize < self.mapGridData?.pointsPerSquare ?? CGFloat(12.0) {
         if (annotation?.isMarker == true && annotation?.isMark == false ) { //check the previous annotation is square
           let previousBoxId = selectedSquare.bounds?.id
@@ -510,20 +525,4 @@ extension W3WAppleMapHelper {
     
   }
   
-}
-
-
-extension W3WAppleMapHelper {
-  
-  func findAnnotation(_ square: W3WSquare?) -> W3WAppleMapAnnotation? {
-    for annotation in annotations {
-      if let a = annotation as? W3WAppleMapAnnotation {
-        if (a.square?.bounds?.id == square?.bounds?.id) {
-          return a
-        }
-      }
-    }
-    
-    return nil
-  }
 }

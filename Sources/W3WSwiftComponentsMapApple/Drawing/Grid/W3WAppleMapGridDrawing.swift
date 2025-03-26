@@ -42,7 +42,7 @@ extension W3WAppleMapGridDrawingProtocol {
     
     if let lastZoomPointsPerSquare = mapGridData?.lastZoomPointsPerSquare {
       let squareSize = getPointsPerSquare()
-      if (squareSize < CGFloat(12.0) && lastZoomPointsPerSquare > CGFloat(12.0)) || (squareSize > CGFloat(12.0) && lastZoomPointsPerSquare < CGFloat(12.0)) {
+      if (squareSize < CGFloat(12) && lastZoomPointsPerSquare > CGFloat(12)) || (squareSize > CGFloat(12) && lastZoomPointsPerSquare < CGFloat(12)) {
         
         redrawPins()
       }
@@ -175,7 +175,8 @@ extension W3WAppleMapGridDrawingProtocol {
       }
       
       mapGridData.squareRenderer = squareRenderer
-      return squareRenderer
+    
+      return mapGridData.squareRenderer
       
       }
     return nil
@@ -191,11 +192,38 @@ extension W3WAppleMapGridDrawingProtocol {
     
   }
   
+  func getPointsPerMeter() -> CGFloat {
+      let mapCenter = mapView!.centerCoordinate
+      
+      // Create two points 1 meter apart (heading east)
+      let metersPerDegreeAtEquator = 111319.9 // meters per degree of longitude at the equator
+      let metersPerDegree = metersPerDegreeAtEquator * cos(mapCenter.latitude * .pi / 180.0)
+      let longitudeDelta = 1.0 / metersPerDegree
+      
+      let point1 = mapCenter
+      let point2 = CLLocationCoordinate2D(
+          latitude: mapCenter.latitude,
+          longitude: mapCenter.longitude + longitudeDelta
+      )
+      
+      // Convert both points to screen coordinates
+      let point1Screen = mapView!.convert(point1, toPointTo: nil)
+      let point2Screen = mapView!.convert(point2, toPointTo: nil)
+      
+      // Calculate the distance in points
+      let distance = hypot(point2Screen.x - point1Screen.x, point2Screen.y - point1Screen.y)
+      
+      return distance
+  }
+  
   func getPointsPerSquare() -> CGFloat {
     let threeMeterMapSquare = MKCoordinateRegion(center: mapView!.centerCoordinate, latitudinalMeters: 3, longitudinalMeters: 3);
     let threeMeterViewSquare = mapView!.convert(threeMeterMapSquare, toRectTo: nil)
     
     return threeMeterViewSquare.size.height
+    
+  //  let pointsPerMeter = getPointsPerMeter()
+ //   return pointsPerMeter * 3 // For a 3-meter square
   }
   
   func redrawAll() {
@@ -228,8 +256,8 @@ extension W3WAppleMapGridDrawingProtocol {
     var alpha = CGFloat(0.0)
     
     let pointsPerSquare = self.getPointsPerSquare()
-    if pointsPerSquare > CGFloat(11.0) {
-      alpha = (pointsPerSquare - CGFloat(11.0)) / CGFloat(11.001)
+    if pointsPerSquare > CGFloat(12) {
+      alpha = (pointsPerSquare - CGFloat(12)) / CGFloat(11.001) //001
     }
     
     if alpha > 1.0 {
@@ -257,8 +285,7 @@ extension W3WAppleMapGridDrawingProtocol {
           showOutline(square, a)
         }
         //return an empty box
-        let box = MKAnnotationView(frame: CGRect(x: 0.0, y: 0.0, width: 0.0, height: 0.0))
-        return box
+        return MKAnnotationView(frame: CGRect(x: 0.0, y: 0.0, width: 0.0, height: 0.0))
       } else {
         if let square = a.square {
           hideOutline(square)
@@ -306,105 +333,113 @@ extension W3WAppleMapGridDrawingProtocol {
       }
   }
   
+  
   /// makes overlays from the squares
 
   func updateSquares() {
-      guard let gridData = self.mapGridData else { return }
-      
-      // Create a dispatch group to coordinate synchronization
-      let group = DispatchGroup()
-      
-      var colorsCopy = [Int64: W3WColor]()
-      
-      // Enter the group before starting work
-      group.enter()
-      
-      // Get colors from main thread
-      W3WThread.runOnMain {
-          colorsCopy = gridData.overlayColors
-          group.leave() // Signal that colors are ready
-      }
-      
-      // Wait for colors to be copied
-      group.wait()
-      
-      // Initialize the hash tracking variable if needed
-      if gridData.previousStateHash == nil {
-          gridData.previousStateHash = 0
-      }
-      
-      // Create a comprehensive hash of the entire rendering state
-      var stateHasher = Hasher()
-      
-      // Hash the square IDs
-      for square in gridData.squares ?? [] {
-          if let id = square.bounds?.id {
-              stateHasher.combine(id)
-          }
-      }
-      
-      // Hash the colors
-      for (id, color) in colorsCopy {
-          stateHasher.combine(id)
-          stateHasher.combine(color.description)
-      }
 
-      // Hash the selected square
-      if let selectedId = gridData.selectedSquare?.bounds?.id {
-          stateHasher.combine(selectedId)
-      }
-      
-      // Hash the markers commented out in your implementation
-      // for marker in gridData.markers {
-      //     if let id = marker.bounds?.id {
-      //         stateHasher.combine(id)
-      //     }
-      // }
-
-      let currentStateHash = stateHasher.finalize()
-      
-      // If nothing has changed, skip the update
-      if currentStateHash == gridData.previousStateHash && gridData.previousStateHash != 0 {
-          return
-      }
-      
-      // Update hash for next comparison
-      gridData.previousStateHash = currentStateHash
-      
-      var boxes = [(polyline: W3WMapSquareLines, color: W3WColor?)]()
-      
-      for square in gridData.squares ?? [] {
-          if let ne = square.bounds?.northEast,
-             let sw = square.bounds?.southWest {
-              
-              let nw = CLLocationCoordinate2D(latitude: ne.latitude, longitude: sw.longitude)
-              let se = CLLocationCoordinate2D(latitude: sw.latitude, longitude: ne.longitude)
-              let polyline = W3WMapSquareLines(coordinates: [nw, ne, se, sw, nw], count: 5)
-
-              polyline.associatedSquare = square
-              
-              let boxId = polyline.box.id ?? 0
-              let color = colorsCopy[boxId]
+    guard let gridData = self.mapGridData else { return }
+        
+        // Create a dispatch group to coordinate synchronization
+        let group = DispatchGroup()
+        
+        var colorsCopy = [Int64: W3WColor]()
+        
+        // Enter the group before starting work
+        group.enter()
+        
+        // Get colors from main thread
+        W3WThread.runOnMain {
+            colorsCopy = gridData.overlayColors
+            group.leave() // Signal that colors are ready
+        }
+        
+        // Wait for colors to be copied
+        group.wait()
+        
+        // Initialize the hash tracking variable if needed
+        if gridData.previousStateHash == nil {
+            gridData.previousStateHash = 0
+        }
+        
+        // Create a comprehensive hash of the entire rendering state
+        var stateHasher = Hasher()
+        
+        // Hash the square IDs
+        for square in gridData.squares ?? [] {
           
-              boxes.append((polyline: polyline, color: color))
-          }
-      }
-    
-      if !gridData.coloredPolylines.isEmpty {
-          gridData.coloredPolylines.removeAll()
-      }
-      
-      // Create a local copy of boxes to ensure thread safety
-      let boxesCopy = boxes
+            if let id = square.bounds?.id {
+              
+              if (square.bounds?.id == gridData.selectedSquare?.bounds?.id) {
+                
+              }
+                stateHasher.combine(id)
+            }
+        }
+        
+        // Hash the colors
+        for (id, color) in colorsCopy {
+            stateHasher.combine(id)
+            stateHasher.combine(color.description)
+        }
 
-      W3WThread.runOnMain {
-          self.removeSquareOverlays()
-          // Use boxesCopy instead of the original boxes array
-          for box in boxesCopy {
-              self.addOverlay(box.polyline, box.color)
-          }
+        // Hash the selected square
+        if let selectedId = gridData.selectedSquare?.bounds?.id {
+            stateHasher.combine(selectedId)
+        }
+        
+        // Hash the markers commented out in your implementation
+        // for marker in gridData.markers {
+        //     if let id = marker.bounds?.id {
+        //         stateHasher.combine(id)
+        //     }
+        // }
+
+        let currentStateHash = stateHasher.finalize()
+        
+        // If nothing has changed, skip the update
+        if currentStateHash == gridData.previousStateHash && gridData.previousStateHash != 0 {
+           return
+        }
+        
+        // Update hash for next comparison
+        gridData.previousStateHash = currentStateHash
+        
+        var boxes = [(polyline: W3WMapSquareLines, color: W3WColor?)]()
+        
+        for square in gridData.squares ?? [] {
+            if let ne = square.bounds?.northEast,
+               let sw = square.bounds?.southWest {
+                
+                let nw = CLLocationCoordinate2D(latitude: ne.latitude, longitude: sw.longitude)
+                let se = CLLocationCoordinate2D(latitude: sw.latitude, longitude: ne.longitude)
+                let polyline = W3WMapSquareLines(coordinates: [nw, ne, se, sw, nw], count: 5)
+
+           //     polyline.associatedSquare = square
+                
+                let boxId = polyline.box.id ?? 0
+                let color = colorsCopy[boxId]
+            
+                boxes.append((polyline: polyline, color: color))
+            }
+        }
+    W3WThread.runOnMain {
+      if !gridData.coloredPolylines.isEmpty {
+        gridData.coloredPolylines = []
       }
-  }
+    }
+        
+        // Create a local copy of boxes to ensure thread safety
+        let boxesCopy = boxes
+
+        W3WThread.runOnMain {
+            self.removeSquareOverlays()
+            // Use boxesCopy instead of the original boxes array
+            for box in boxesCopy {
+                addOverlay(box.polyline, box.color)
+            }
+        }
+   }
   
   func updateSelectedSquare() {
     guard let gridData = self.mapGridData else { return }
@@ -480,28 +515,49 @@ extension W3WAppleMapGridDrawingProtocol {
     let identifier = "w3wPin"
     let color : W3WColor? =  annotation.color
     var pinImage: UIImage?
-    let pinSize = CGFloat(40.0) 
     var centerOffset: CGPoint = .zero
-    let s = annotation.square
-    let w  = s?.words
 
+    let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+    
     if case .circle = annotation.type {
-      pinImage = W3WImage(drawing: .mapCircle, colors: .standardMaps.with(background: color)).get(size: W3WIconSize(value: CGSize(width: mapGridData?.pinWidth ?? CGFloat(30.0) , height: mapGridData?.pinHeight ?? CGFloat(30.0))))
+      
+      let circleWidth = mapGridData?.pinWidth ?? CGFloat(30.0)
+      let circleHeight = mapGridData?.pinHeight ?? CGFloat(30.0)
+      let circleFrameSize = mapGridData?.pinFrameSize ?? CGFloat(30.0)
+      
+      pinImage = W3WImage(drawing: .mapCircle, colors: .standardMaps.with(background: color)).get(size: W3WIconSize(value: CGSize(width: circleWidth , height: circleHeight)))
+      
       centerOffset = CGPoint(x: 0.0, y: 0.0)
+      annotationView.image = pinImage
+      annotationView.frame.size = CGSize(width: circleFrameSize, height: circleFrameSize)
+      
+      if #available(iOS 14.0, *) {
+        annotationView.zPriority = .defaultUnselected
+      }
     }
     
     if case .square = annotation.type {
+      
+      let squareSize = mapGridData?.pinSquareSize ?? CGFloat(50.0)
+      let squareWidth = squareSize / 2.0
+      let squareHeight = squareSize / 2.0
+      
       pinImage = W3WImage(drawing: .mapPin, colors: .standardMaps.with(background: color))
-        .get(size: W3WIconSize(value: CGSize(width: (mapGridData?.pinSize ??  CGFloat(40.0)) / 2.0  , height: (mapGridData?.pinSize ?? CGFloat(40.0)) / 2.0)))
-      centerOffset = CGPoint(x: 0.0, y: (-5))
+        .get(size: W3WIconSize(value: CGSize(width: squareWidth  , height: squareHeight)))
+      
+      centerOffset = CGPoint(x: 0.0, y: (-20.0))
+      annotationView.image = pinImage
+      annotationView.frame.size = CGSize(width: squareSize, height: squareSize)
+      
+      if #available(iOS 14.0, *) {
+        annotationView.zPriority = .max
+      }
+
     }
-    
-    
-    let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-    annotationView.image = pinImage
-    annotationView.frame.size = CGSize(width:mapGridData?.pinWidth ?? CGFloat(35), height: mapGridData?.pinHeight ?? CGFloat(35))
-     annotationView.centerOffset = centerOffset
-   
+    annotationView.centerOffset = centerOffset
+    // Make the pin selectable
+    annotationView.canShowCallout = true
+    annotationView.isEnabled = true
     return annotationView
   }
 }
@@ -889,31 +945,53 @@ extension W3WAppleMapGridDrawingProtocol {
     }
   }
   
+  func __hideOutline(_ square: W3WSquare) {
+      // Capture necessary data before async execution
+      guard let squareId = square.bounds?.id else {
+          print("Cannot hide square: missing bounds ID")
+          return
+      }
+      
+      W3WThread.runInBackground {
+               if  let mapGridData = self.mapGridData,
+                   !mapGridData.squares.isEmpty {
+              return
+          }
+          
+          // Instead of removing in-place, create a new filtered array
+        let filteredSquares = mapGridData?.squares.filter { square in
+              return square.bounds?.id != squareId
+          }
+          
+          // Update on main thread
+        W3WThread.runOnMain {
+          self.mapGridData?.squares = filteredSquares ?? []
+              self.updateSquares()
+        }
+      }
+  }
+  
   func hideOutline(_ square: W3WSquare) {
     W3WThread.runInBackground {
-      if var squares =  self.mapGridData?.squares {
-        squares.removeAll(where: { s in
-          return s.bounds?.id == square.bounds?.id
-        })
+      if let s =  self.mapGridData?.squares {
+        if s != nil {
+          W3WThread.runOnMain {
+            self.mapGridData?.squares.removeAll(where: { s in
+              return s.bounds?.id == square.bounds?.id
+            })
+          }
+        }
       }
-
-//      for anno in annotations {
-//        if let a = anno as? W3WAppleMapAnnotation {
-//          print(a.square?.words)
-//          print(annotations.count)
-//        }
-//      }
-      
       self.updateSquares()
+      
     }
-
   }
   
   func hideOutlineMarker(_ square: W3WSquare) {
     
     W3WThread.runInBackground {
       if let s =  self.mapGridData?.markers {
-        if s.count != 0 {
+        if s != nil {
           self.mapGridData?.markers.removeAll(where: { m in
             return m.bounds?.id == square.bounds?.id
           })

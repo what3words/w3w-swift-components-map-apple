@@ -19,29 +19,29 @@ public class W3WAppleMapGridData {
   
   private var cancellables = Set<AnyCancellable>()
 
-  public let squareColor    = W3WLive<W3WColor>(.w3wBrandBase)
+   let squareColor    = W3WLive<W3WColor>(.w3wBrandBase)
   
-  public let mapGridColor   = W3WLive<W3WColor>(.mediumGrey)
-  public let mapGridLineThickness = W3WLive<W3WLineThickness>(0.5)
+   let mapGridColor   = W3WLive<W3WColor>(.mediumGrey)
+   let mapGridLineThickness = W3WLive<W3WLineThickness>(0.5)
   
-  public let mapSquareColor = W3WLive<W3WColor>(.black)
-  public let mapSquareLineThickness = W3WLive<W3WLineThickness>(0.1)
+   let mapSquareColor = W3WLive<W3WColor>(.black)
+   let mapSquareLineThickness = W3WLive<W3WLineThickness>(0.1)
   
-  public let selectedSquareBorderColor = W3WLive<W3WColor>(.black)
-  public let selectedSquareThickness = W3WLive<W3WLineThickness>(0.5)
+   let selectedSquareBorderColor = W3WLive<W3WColor>(.black)
+   let selectedSquareThickness = W3WLive<W3WLineThickness>(0.5)
   
-  public let pinWidth: CGFloat = CGFloat(35.0)
-  public let pinHeight: CGFloat = CGFloat(35.0)
-  public let pinSize   = CGFloat(40.0)
+   let pinWidth = CGFloat(30.0)
+   let pinHeight  = CGFloat(30.0)
+   let pinFrameSize   = CGFloat(30.0)
+   let pinSquareSize   = CGFloat(50.0)
+   let squarePinFrameSize   = CGFloat(50.0)
+  
   public var onError: W3WMapErrorHandler = { _ in }
    
   var gridRendererPointer: W3WMapGridRenderer? = nil
   var squareRendererPointer: W3WMapSquaresRenderer? = nil
-  
   var gridLinePointer: W3WMapGridLines? = nil
-  
 
-  
   var w3w: W3WProtocolV4?
   
   /// language to use currently
@@ -60,18 +60,25 @@ public class W3WAppleMapGridData {
   
   var currentSquare: W3WSquare? = nil
   
-  public var currentOverlays: [Int64: MKOverlay] = [:]
+  var currentOverlays: [Int64: MKOverlay] = [:]
   
-  public var overlayColors: [Int64: W3WColor] = [:]
+  var overlayColors: [Int64: W3WColor] = [:]
   
-  public var previousSquareIds = Set<Int64>()
-  public var previousSquareIdsHash: Int?
-  public var previousStateHash: Int?
-  public var coloredPolylines = [ColoredPolyline]()
+  var previousSquareIds = Set<Int64>()
   
-  public var scheme: W3WScheme? = .w3w
+  var previousSquareIdsHash: Int?
+  
+  var previousStateHash: Int?
+  
+  var coloredPolylines = [ColoredPolyline]()
+  
+  ///keep track of annoptation positions globally
+  var annotationPositions: [String: CGPoint] = [:]
+  
+  var scheme: W3WScheme? = .w3w
   
   var mapZoomLevel = CGFloat(0.0)
+  
   var pointsPerSquare = CGFloat(12.0)
   
   /// keep track of the zoom level so we can change pins to squares at a certain point
@@ -160,10 +167,9 @@ public class ColoredPolyline {
   
 }
 
-
 public class W3WMapSquareLines: MKPolyline {
   
-  var associatedSquare: W3WSquare?
+//  var associatedSquare: W3WSquare?
   
   var box: W3WBaseBox {
     let points = self.points()
@@ -172,7 +178,7 @@ public class W3WMapSquareLines: MKPolyline {
     return W3WBaseBox(southWest: sw, northEast: ne)
   }
   
-  convenience init? (bounds: W3WBaseBox?, square: W3WSquare? = nil) {
+  convenience init? (bounds: W3WBaseBox?) {
     guard let ne = bounds?.northEast,
           let sw = bounds?.southWest else {
       return nil
@@ -183,14 +189,13 @@ public class W3WMapSquareLines: MKPolyline {
     let coordinates = [nw, ne, se, sw, nw]
     
     self.init(coordinates: coordinates, count: 5)
-    self.associatedSquare = square
+  //  self.associatedSquare = square
   }
 }
 
 public class W3WMapSquaresRenderer: MKPolylineRenderer {
   
   private var squareW3WImage: UIImage?
-     
      // Cache the bounding rect to avoid recalculating it
      private var cachedBoundingRect: CGRect?
      
@@ -202,7 +207,6 @@ public class W3WMapSquaresRenderer: MKPolylineRenderer {
          return
          
        }
-         
          // Calculate the display rect if needed
          let displayRect = cachedBoundingRect ?? {
              let rect = self.rect(for: self.polyline.boundingMapRect)
@@ -221,14 +225,10 @@ public class W3WMapSquaresRenderer: MKPolylineRenderer {
      
      // Method to set the W3WImage
      public func setSquareImage(_ w3wImage: UIImage?) {
-
          self.squareW3WImage = w3wImage
          self.cachedBoundingRect = nil // Invalidate cached rect
          self.setNeedsDisplay()
      }
-     
-
-
 }
 
 #endif
