@@ -208,10 +208,13 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapGridDrawingProtocol, W3WApp
           
           // Create a section key based on annotation's location
           // Round to nearest grid to group nearby pins
-          let gridSize: Double = 0.0001 // Adjust based on your needs
-          let latSection = Int((annotation.square?.coordinates!.latitude ?? 0) / gridSize)
-          let lngSection = Int(annotation.square?.coordinates!.longitude ?? 0 / gridSize)
-          let sectionKey = "\(latSection)_\(lngSection)"
+        let gridSize: Double = 0.0001 // Adjust based on your needs
+        let latValue: Double = annotation.square?.coordinates?.latitude ?? annotation.coordinate.latitude
+        let lngValue: Double = annotation.square?.coordinates?.longitude ?? annotation.coordinate.longitude
+
+        let latSection = Int(latValue / gridSize)
+        let lngSection = Int(lngValue / gridSize)
+        let sectionKey = "\(latSection)_\(lngSection)"
           
           // Get current center point for this view
           let center = view.center
@@ -281,7 +284,7 @@ public extension W3WAppleMapHelper {
   
   func select(at: W3WSquare) {
     createMarkerForConditions(at: at)
- }
+  }
   
   func createMarkerForConditions(at: W3WSquare) {
     

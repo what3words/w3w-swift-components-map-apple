@@ -124,24 +124,24 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
   }
   
   public func updateSavedLists(markers: W3WMarkersLists) {
-    viewModel.mapState.markers.send(markers)
+    viewModel.input.markers.send(markers)
   }
   
   func bind() {
     
-    subscribe(to: self.viewModel.mapState.markers) { [weak self] markers in
+    subscribe(to: self.viewModel.input.markers) { [weak self] markers in
       guard let self = self else { return }
       
       w3wHelper.updateMarkers(markers: markers)
     }
     
-    subscribe(to: self.viewModel.mapState.camera) { [weak self] camera in
+    subscribe(to: self.viewModel.input.camera) { [weak self] camera in
       guard let self = self else { return }
       
       w3wHelper.updateCamera(camera: camera)
     }
     
-    subscribe(to: self.viewModel.mapState.selected) { [weak self] square in
+    subscribe(to: self.viewModel.input.selected) { [weak self] square in
       guard let self = self else { return }
       
       w3wHelper.updateSquare(square: square)
@@ -157,7 +157,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     
     w3wHelper.addMarker(at: "intervene.cities.bachelor", color: .w3wBrandBase, type: .circle)//
     w3wHelper.addMarker(at: "outgrown.onions.marathon", color: .brown, type: .circle)//
-  //  w3wHelper.addMarker(at: "gums.tulip.impulsive", color: .cranberry, type: .circle)//
+    w3wHelper.addMarker(at: "gums.tulip.impulsive", color: .cranberry, type: .circle)//
     w3wHelper.addMarker(at: "dugouts.flaking.pleasing", color: .brightGreen, type: .circle)//
     w3wHelper.addMarker(at: "humans.stags.insulated", color: .darkGreen, type: .circle) //
     w3wHelper.addMarker(at: "melts.luggage.cuter", color: .systemPurple, type: .circle) ////
@@ -268,7 +268,8 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
           markersList.add(square: square, listName: "favorites")
          // self.viewModel.mapState.markers.send(markersList)
           
-          self.viewModel.mapState.selected.send(square)
+       //   self.viewModel.mapState.selected.send(square)
+          self.viewModel.output.send(.selected(square))
         case .failure(let error):
            print("Show Error")
 
@@ -276,7 +277,6 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
           
         }
         
-
       }
       
     }
