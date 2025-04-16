@@ -15,7 +15,7 @@ import W3WSwiftComponentsMap
 import Combine
 
 
-public protocol W3WAppleMapGridDrawingProtocol {
+public protocol W3WAppleMapDrawerProtocol {
   
   var mapView: MKMapView? { get }
   var region: MKCoordinateRegion { get }
@@ -34,7 +34,7 @@ public protocol W3WAppleMapGridDrawingProtocol {
   func setCenter(_ coordinate: CLLocationCoordinate2D, animated: Bool)
 }
 
-extension W3WAppleMapGridDrawingProtocol {
+extension W3WAppleMapDrawerProtocol {
   
   public func updateMap() {
     
@@ -42,7 +42,7 @@ extension W3WAppleMapGridDrawingProtocol {
     
     if let lastZoomPointsPerSquare = mapGridData?.lastZoomPointsPerSquare {
       let squareSize = getPointsPerSquare()
-      if (squareSize < CGFloat(12) && lastZoomPointsPerSquare > CGFloat(12)) || (squareSize > CGFloat(12) && lastZoomPointsPerSquare < CGFloat(12)) {
+      if (squareSize < CGFloat(12.0) && lastZoomPointsPerSquare > CGFloat(12.0)) || (squareSize > CGFloat(12.0) && lastZoomPointsPerSquare < CGFloat(12.0)) {
         
         redrawPins()
       }
@@ -150,7 +150,7 @@ extension W3WAppleMapGridDrawingProtocol {
       }
 
       let w3wImage: UIImage?
-      w3wImage = W3WImageCache.shared.getImage(for: bgSquareColor ?? .w3wBrandBase, size: CGSize(width: 25, height: 25)) ?? W3WImageCache.shared.getImage(for: .w3wBrandBase, size: CGSize(width: 25, height: 25))
+      w3wImage = W3WImageCache.shared.getImage(for: bgSquareColor ?? .w3wBrandBase, size: CGSize(width: 55, height: 55)) ?? W3WImageCache.shared.getImage(for: .w3wBrandBase, size: CGSize(width: 55, height: 55))
 
      if (isSelectedSquare) {
        if (isMarker == true) {
@@ -272,7 +272,7 @@ extension W3WAppleMapGridDrawingProtocol {
   
 }
 
-extension W3WAppleMapGridDrawingProtocol {
+extension W3WAppleMapDrawerProtocol {
 
   // MARK: Pins / Annotations
   
@@ -525,7 +525,7 @@ extension W3WAppleMapGridDrawingProtocol {
       let circleHeight = mapGridData?.pinHeight ?? CGFloat(30.0)
       let circleFrameSize = mapGridData?.pinFrameSize ?? CGFloat(30.0)
       
-      pinImage = W3WImage(drawing: .mapCircle, colors: .standardMaps.with(background: color)).get(size: W3WIconSize(value: CGSize(width: circleWidth , height: circleHeight)))
+      pinImage = W3WImage(drawing: .mapCircle, colors: .standardMaps.with(background: color).with(foreground: color?.complimentaryTextColor())).get(size: W3WIconSize(value: CGSize(width: circleWidth , height: circleHeight)))
       
       centerOffset = CGPoint(x: 0.0, y: 0.0)
       annotationView.image = pinImage
@@ -539,11 +539,11 @@ extension W3WAppleMapGridDrawingProtocol {
     if case .square = annotation.type {
       
       let squareSize = mapGridData?.pinSquareSize ?? CGFloat(50.0)
-      let squareWidth = squareSize / 2.0
-      let squareHeight = squareSize / 2.0
+      let pinImageWidth = squareSize
+      let pinImageHeight = squareSize
       
-      pinImage = W3WImage(drawing: .mapPin, colors: .standardMaps.with(background: color))
-        .get(size: W3WIconSize(value: CGSize(width: squareWidth  , height: squareHeight)))
+      pinImage = W3WImage(drawing: .mapPin, colors: .standardMaps.with(background: color).with(foreground: color?.complimentaryTextColor()))
+        .get(size: W3WIconSize(value: CGSize(width: pinImageWidth  , height: pinImageHeight)))
       
       centerOffset = CGPoint(x: 0.0, y: (-20.0))
       annotationView.image = pinImage
@@ -562,7 +562,7 @@ extension W3WAppleMapGridDrawingProtocol {
   }
 }
 
-extension W3WAppleMapGridDrawingProtocol {
+extension W3WAppleMapDrawerProtocol {
   
   // MARK: SQUARES CHECK
   
@@ -888,7 +888,7 @@ extension W3WAppleMapGridDrawingProtocol {
 }
 
 
-extension W3WAppleMapGridDrawingProtocol {
+extension W3WAppleMapDrawerProtocol {
   
   /// remove a what3words annotation from the map if it is present
   public func removeMarker(at suggestion: W3WSuggestion?) {
@@ -1054,7 +1054,7 @@ extension W3WAppleMapGridDrawingProtocol {
   
 }
 
-extension W3WAppleMapGridDrawingProtocol {
+extension W3WAppleMapDrawerProtocol {
   
   /// set the map center to a coordinate, and set the minimum visible area
   func set(center: CLLocationCoordinate2D) {

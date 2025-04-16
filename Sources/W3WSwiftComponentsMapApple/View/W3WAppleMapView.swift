@@ -26,7 +26,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
   /// The map view model to use
   public var viewModel: W3WMapViewModelProtocol
   
-  var helper: W3WAppleMapGridDrawingProtocol!
+  var helper: W3WAppleMapDrawerProtocol!
   
   typealias W3WHelper  = W3WAppleMapHelper
   
@@ -54,7 +54,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     
     self.viewModel = viewModel
     super.init(frame: .w3wWhatever)
-    self.helper = W3WAppleMapHelper(mapView: self, viewModel.w3w) as! any W3WAppleMapGridDrawingProtocol
+    self.helper = W3WAppleMapHelper(mapView: self, viewModel.w3w) as! any W3WAppleMapDrawerProtocol
 
     configure()
   }
@@ -70,13 +70,14 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     bind()
     
     tesFuncs()
-
+    
+    attachTapRecognizer()
   }
   
   func tesFuncs() {
     
-    addTestMarkers()
-    attachTapRecognizer()
+ //   addTestMarkers()
+   
   }
   
   /// Make an Apple Map Kit Map
@@ -131,7 +132,6 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     
     subscribe(to: self.viewModel.input.markers) { [weak self] markers in
       guard let self = self else { return }
-      
       w3wHelper.updateMarkers(markers: markers)
     }
     
@@ -143,7 +143,6 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     
     subscribe(to: self.viewModel.input.selected) { [weak self] square in
       guard let self = self else { return }
-      
       w3wHelper.updateSquare(square: square)
     }
     
@@ -155,43 +154,8 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
   
   func addTestMarkers(){
     
-    w3wHelper.addMarker(at: "intervene.cities.bachelor", color: .w3wBrandBase, type: .circle)//
-    w3wHelper.addMarker(at: "outgrown.onions.marathon", color: .brown, type: .circle)//
-    w3wHelper.addMarker(at: "gums.tulip.impulsive", color: .cranberry, type: .circle)//
-    w3wHelper.addMarker(at: "dugouts.flaking.pleasing", color: .brightGreen, type: .circle)//
-    w3wHelper.addMarker(at: "humans.stags.insulated", color: .darkGreen, type: .circle) //
-    w3wHelper.addMarker(at: "melts.luggage.cuter", color: .systemPurple, type: .circle) ////
-    w3wHelper.addMarker(at: "described.enforced.prude", color: .red , type: .circle)
-    w3wHelper.addMarker(at: "bleaching.urgent.heartache", color: .aqua, type: .circle)//
-   w3wHelper.addMarker(at: "allowable.realm.crafted", color: .lightCyan, type: .circle)//
-    w3wHelper.addMarker(at: "admire.couch.celebrate", color: .aqua, type: .circle)//
-    w3wHelper.addMarker(at: "listen.searching.reviews", color: .charcoal, type: .circle)//
-    w3wHelper.addMarker(at: "vaulting.lasts.birthing", color: .dullRed, type: .circle)//
-    w3wHelper.addMarker(at: "sleeping.beanbag.contour", color: .darkBlue , type: .circle)//
-    w3wHelper.addMarker(at: "described.enforced.prude", color: .red , type: .circle)//
-    w3wHelper.addMarker(at: "often.opts.blushes", color: .darkBlueAlpha60, type: .circle)//
-    w3wHelper.addMarker(at: "skinny.bound.reclusive", color: .w3wSuccessLabelDark, type: .circle)//
-    w3wHelper.addMarker(at: "segregate.unwraps.majors", color: .mustard, type: .circle)//
-    w3wHelper.addMarker(at: "losses.pheasants.eagle", color: .systemYellow, type: .circle)
-    w3wHelper.addMarker(at: "protected.nylon.will", color: .w3wErrorBase, type: .circle)//
-    w3wHelper.addMarker(at: "majors.supplier.playing", color: .brown, type: .circle)//
-    w3wHelper.addMarker(at: "legend.milkman.upholding", color: .blue, type: .circle)//
-    w3wHelper.addMarker(at: "unsecured.slugs.unveils", color: .secondary, type: .circle)//
-    w3wHelper.addMarker(at: "towers.oiled.dentures", color: .yellow, type: .circle)//
-    w3wHelper.addMarker(at: "intervene.cities.bachelor", color: .purple, type: .circle)//
-    w3wHelper.addMarker(at: "gladiators.surface.eyeliner", color: .purple, type: .circle)//
-    w3wHelper.addMarker(at: "attaching.things.global", color: .purple, type: .circle)//
+    w3wHelper.addMarker(at: "become.outlooks.rising", color: .white, type: .circle)//
     
-    w3wHelper.addMarker(at: "nipped.concluded.fabric", color: .w3wErrorBase, type: .circle)//
-    w3wHelper.addMarker(at: "slept.beakers.amuses", color: .brown, type: .circle)//
-    
-    w3wHelper.addMarker(at: "deflation.dollar.purple", color: .darkBlue , type: .circle)//
-    w3wHelper.addMarker(at: "croutons.approve.drew", color: .red , type: .circle)//
-    w3wHelper.addMarker(at: "musically.storms.smirks", color: .darkBlueAlpha60, type: .circle)//
-    w3wHelper.addMarker(at: "dissolves.discloses.voting", color: .w3wSuccessLabelDark, type: .circle)//
-    w3wHelper.addMarker(at: "trading.yachting.wrong", color: .mustard, type: .circle)//
-    
-    w3wHelper.addMarker(at: "convert.universal.subject", color: .mustard, type: .circle)//
     let coordinate = CLLocationCoordinate2D(
       latitude: 10.780468,
       longitude: 106.705438
@@ -257,28 +221,18 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
       self.w3wHelper.select(at: coordinates) { [weak self] result in
         
         guard let self = self else { return }
-        
         switch result {
-          
         case .success(let square):
-          
           //build the list
-          let markersList = W3WMarkersLists(defaultColor: .w3wBrandBase)
-          markersList.add(listName: "favorites", color: .w3wBrandBase)
-          markersList.add(square: square, listName: "favorites")
-         // self.viewModel.mapState.markers.send(markersList)
-          
-       //   self.viewModel.mapState.selected.send(square)
+      //    let markersList = W3WMarkersLists(defaultColor: .w3wBrandBase)
+         // markersList.add(listName: "favorites", color: .w3wBrandBase)
+        //  markersList.add(square: square, listName: "favorites")
           self.viewModel.output.send(.selected(square))
         case .failure(let error):
            print("Show Error")
-
         default: break
-          
         }
-        
       }
-      
     }
   }
 
@@ -331,7 +285,6 @@ extension W3WAppleMapView: MKMapViewDelegate {
     let mapWidthInPoints = mapView.frame.size.width
     let zoomScale = mapRect.size.width / Double(mapWidthInPoints)
     
-    
     w3wHelper.mapView(mapView, regionDidChangeAnimated: animated)
     
   }
@@ -350,8 +303,3 @@ extension W3WAppleMapView: MKMapViewDelegate {
   }
   
 }
-
-extension W3WAppleMapView {
-
-}
-

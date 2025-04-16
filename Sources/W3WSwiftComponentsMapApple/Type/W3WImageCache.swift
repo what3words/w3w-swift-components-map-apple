@@ -21,7 +21,7 @@ class W3WImageCache {
       }
       
       // Get the image
-    let newImage = W3WImage(drawing: .mapSquare, colors: .standardMaps.with(background: color))
+    let newImage = W3WImage(drawing: .mapSquare, colors: .standardMaps.with(background: color) .with(foreground: color.complimentaryTextColor()))
           .get(size: W3WIconSize(value: size))
       
       // Cache it if it's not nil

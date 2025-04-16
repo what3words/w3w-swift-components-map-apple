@@ -12,7 +12,7 @@ import W3WSwiftCore
 import W3WSwiftComponentsMap
 import W3WSwiftDesign
 
-public class W3WAppleMapHelper: NSObject, W3WAppleMapGridDrawingProtocol, W3WAppleMapHelperProtocol {
+public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMapHelperProtocol {
 
   public weak var mapView: MKMapView?
   
@@ -39,9 +39,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapGridDrawingProtocol, W3WApp
       return mapView?.mapType as! MKMapType
     }
     set {
-
       mapView?.mapType = newValue
-
       self.redrawAll()
       setGridColor()
     }
@@ -75,7 +73,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapGridDrawingProtocol, W3WApp
   
   func setGridColor() {
     if let gridData = mapGridData {
-      gridData.mapGridColor.send(mapType == .standard ? .red : .white)
+      gridData.mapGridColor.send(mapType == .standard ? .mediumGrey : .white)
     }
   }
   
@@ -270,7 +268,7 @@ public extension W3WAppleMapHelper {
       }
       if let s = square {
         W3WThread.runOnMain {
-          self.select(at: s)
+          //self.select(at: s)
           completion(.success(s))
         }
       } else {
@@ -445,45 +443,50 @@ public extension W3WAppleMapHelper {
       gridData.squareIsMarker = nil
       gridData.currentSquare = nil
     }
+    redrawPins()
+    redrawSquares()
   }
   public func findMarker(by coordinates: CLLocationCoordinate2D) -> W3WSquare? {
     return nil
   }
-
-
 }
 
 extension W3WAppleMapHelper {
   
   public func updateCamera(camera: W3WMapCamera?) {
    
-//    W3WThread.runOnMain { [weak self] in
-//      if let self = self {
-//        if let center = camera?.center, let scale = camera?.scale {
-//          let region = MKCoordinateRegion(center: center, span: scale.asSpan(mapSize: mapView!.frame.size , latitude: center.latitude ))
-//          mapView?.setRegion(region, animated: true)
-//          
-//        } else if let center = camera?.center {
-//          mapView?.setCenter(center, animated: true)
-//          
-//        } else if let scale = camera?.scale {
-//          let region = MKCoordinateRegion(center: mapView!.centerCoordinate, span: scale.asSpan(mapSize: mapView!.frame.size, latitude: camera?.center?.latitude ?? 0.0))
-//          mapView?.setRegion(region, animated: true)
-//        }
-//      }
-//    }
+    W3WThread.runOnMain { [weak self] in
+      if let self = self {
+        if let center = camera?.center, let scale = camera?.scale {
+          let region = MKCoordinateRegion(center: center, span: scale.asSpan(mapSize: mapView!.frame.size , latitude: center.latitude ))
+          mapView?.setRegion(region, animated: true)
+          
+        } else if let center = camera?.center {
+          mapView?.setCenter(center, animated: true)
+          
+        } else if let scale = camera?.scale {
+          let region = MKCoordinateRegion(center: mapView!.centerCoordinate, span: scale.asSpan(mapSize: mapView!.frame.size, latitude: camera?.center?.latitude ?? 0.0))
+          mapView?.setRegion(region, animated: true)
+        }
+      }
+    }
   }
   
   public func updateSquare(square: W3WSquare?) {
-    
+    if let square = square {
+   //   addMarker(at: square, color: nil, type: .circle)
+      self.select(at: square)
+    }
   }
   
   public func updateMarkers(markers: W3WMarkersLists) {
     removeAllMarkers()
+    let _list = markers.getLists()
     for (_, list) in markers.getLists() {
       for marker in list.markers {
-       // addMarker(at: marker, color: list.color, type: .circle)
-        print(marker.words, list.color)
+
+        addMarker(at: marker, color: list.color, type: .circle)
+
       }
     }
   }
