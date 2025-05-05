@@ -37,7 +37,7 @@ public class W3WAppleMapGridData {
    let squarePinFrameSize   = CGFloat(50.0)
   
   public var onError: W3WMapErrorHandler = { _ in }
-   
+
   var gridRendererPointer: W3WMapGridRenderer? = nil
   var squareRendererPointer: W3WMapSquaresRenderer? = nil
   var gridLinePointer: W3WMapGridLines? = nil
@@ -60,20 +60,12 @@ public class W3WAppleMapGridData {
   
   var currentSquare: W3WSquare? = nil
   
-  var currentOverlays: [Int64: MKOverlay] = [:]
+  var isUpdatingSquares = false
   
   var overlayColors: [Int64: W3WColor] = [:]
   
-  var previousSquareIds = Set<Int64>()
-  
-  var previousSquareIdsHash: Int?
-  
-  var previousStateHash: Int?
-  
-  var coloredPolylines = [ColoredPolyline]()
-  
-  ///keep track of annoptation positions globally
-  var annotationPositions: [String: CGPoint] = [:]
+  var previousStateHash: Int? = 0
+
   
   var scheme: W3WScheme? = .w3w
   
@@ -155,42 +147,27 @@ public class W3WMapGridLines: MKMultiPolyline {
 public class W3WMapGridRenderer: MKMultiPolylineRenderer {
 }
 
-public class ColoredPolyline {
-  
-    let polyline: W3WMapSquareLines
-    let color: W3WColor?
-    
-    init(polyline: W3WMapSquareLines, color: W3WColor?) {
-        self.polyline = polyline
-        self.color = color
-    }
-  
-}
-
 public class W3WMapSquareLines: MKPolyline {
-  
-//  var associatedSquare: W3WSquare?
-  
+
   var box: W3WBaseBox {
     let points = self.points()
     let sw = points[3].coordinate  // SW is at index 3
     let ne = points[1].coordinate  // NE is at index 1
     return W3WBaseBox(southWest: sw, northEast: ne)
   }
-  
+
   convenience init? (bounds: W3WBaseBox?) {
-    guard let ne = bounds?.northEast,
-          let sw = bounds?.southWest else {
-      return nil
+      guard let ne = bounds?.northEast,
+            let sw = bounds?.southWest else {
+        return nil
+      }
+      
+      let nw = CLLocationCoordinate2D(latitude: ne.latitude, longitude: sw.longitude)
+      let se = CLLocationCoordinate2D(latitude: sw.latitude, longitude: ne.longitude)
+      let coordinates = [nw, ne, se, sw, nw]
+      
+      self.init(coordinates: coordinates, count: 5)
     }
-    
-    let nw = CLLocationCoordinate2D(latitude: ne.latitude, longitude: sw.longitude)
-    let se = CLLocationCoordinate2D(latitude: sw.latitude, longitude: ne.longitude)
-    let coordinates = [nw, ne, se, sw, nw]
-    
-    self.init(coordinates: coordinates, count: 5)
-  //  self.associatedSquare = square
-  }
 }
 
 public class W3WMapSquaresRenderer: MKPolylineRenderer {

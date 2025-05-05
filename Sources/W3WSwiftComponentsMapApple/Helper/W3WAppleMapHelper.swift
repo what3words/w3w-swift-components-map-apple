@@ -58,9 +58,6 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
 
   public private(set) var markers: [W3WSquare] = []
   
- // typealias MarkerCompletion = (W3WSquare?, W3WError?) -> ()
-  
-
   public init(mapView: MKMapView, _ w3w: W3WProtocolV4, language: W3WLanguage = W3WSettings.defaultLanguage ) {
     self.mapView = mapView
     self.w3w = w3w
@@ -115,6 +112,10 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
     }
   }
   
+  private func calculateZoomLevel(_ span: MKCoordinateSpan) -> Double {
+      return log2(360.0 / span.latitudeDelta)
+  }
+  
   public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
     updateMap()
   }
@@ -126,6 +127,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   
   /// hijack this delegate call and update the grid, then pass control to the external delegate
   public func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+
     updateMap()
   }
 
@@ -134,28 +136,27 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   }
   
   public func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation, with transitionScale: CGFloat) -> MKAnnotationView? {
-
     if let a = getMapAnnotationView(annotation: annotation, transitionScale: transitionScale) {
       return a
     }
     
     return nil
   }
-  
-  
+
   public func addAnnotation(_ annotation: MKAnnotation) {
     mapView?.addAnnotation(annotation)
   }
   
   public func removeAnnotation(_ annotation: MKAnnotation) {
     mapView?.removeAnnotation(annotation)
+    
   }
   
   public func removeOverlay(_ overlay: MKOverlay) {
     mapView?.removeOverlay(overlay)
   }
   
-  public func removeOverlays(_ overlay: [MKOverlay]) {
+  public func removeOverlays(_ overlays: [MKOverlay]) {
     mapView?.removeOverlays(overlays)
   }
   
@@ -163,8 +164,8 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
     mapView?.addOverlay(overlay)
   }
   
-  public func addOverlays(_ overlays: MKOverlay) {
-    mapView?.addOverlay(overlays)
+  public func addOverlays(_ overlays: [MKOverlay]) {
+    mapView?.addOverlays(overlays)
   }
   
   public func addOverlays(_ overlays: [MKOverlay], _ color: W3WColor?) {
@@ -172,21 +173,16 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   }
   
   public func addOverlay(_ overlay: MKOverlay, _ color: W3WColor? = nil) {
-
+    
     if let color = color, let square = overlay as? W3WMapSquareLines {
-           
-       let coloredPolyline = ColoredPolyline(polyline: square, color: color)
-          mapGridData?.coloredPolylines.append(coloredPolyline)
+       mapGridData?.overlayColors[square.box.id] = color
     }
-
     mapView?.addOverlay(overlay)
-  }
-
+    
+}
   
   public func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
     if let markerView =  view.annotation as? W3WAppleMapAnnotation {
-      if let square = markerView.square {
-      }
     }
   }
   
@@ -251,12 +247,11 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   
 }
 
-
 public extension W3WAppleMapHelper {
   
   func select(at coordinates: CLLocationCoordinate2D, completion: @escaping (Result<W3WSquare, W3WError>) -> Void) {
     
-    self.convertTo3wa(coordinates: coordinates ??  CLLocationCoordinate2D(), language: self.language)  { [weak self] square, error in
+    self.convertTo3wa(coordinates: coordinates, language: self.language)  { [weak self] square, error in
       
       guard let self = self else { return }
       
@@ -268,7 +263,7 @@ public extension W3WAppleMapHelper {
       }
       if let s = square {
         W3WThread.runOnMain {
-          //self.select(at: s)
+         // self.select(at: s)
           completion(.success(s))
         }
       } else {
@@ -281,12 +276,12 @@ public extension W3WAppleMapHelper {
   }
   
   func select(at: W3WSquare) {
-    createMarkerForConditions(at: at)
+    createMarkerForConditions(at)
   }
   
-  func createMarkerForConditions(at: W3WSquare) {
+  func createMarkerForConditions(_ at: W3WSquare) {
     
-    var squares = self.mapGridData?.squares
+    let squares = self.mapGridData?.squares
     
     let selectedSquare = self.mapGridData?.selectedSquare
     
@@ -309,11 +304,17 @@ public extension W3WAppleMapHelper {
             removeSelectedSquare(at: selectedSquare)
             addMarkerAsCircle(at: selectedSquare, color: previousColor)
           }
+          else{
+            if markers != nil {
+              removeSelectedSquare(at: selectedSquare)
+              addMarkerAsCircle(at: selectedSquare, color: annotation?.color)
+            }
+          }
         }
         else{
           removeSelectedSquare(at: selectedSquare)
         }
-        let previousBoxId = selectedSquare.bounds?.id
+
         addSelectedMarker(at: at, color: .darkBlue, type: .square, isMarker: true, isMark: true)
         self.mapGridData?.selectedSquare = at
         
@@ -325,6 +326,7 @@ public extension W3WAppleMapHelper {
     //squares
     if isMarkerinList == true {
       removeSelectedSquare(at: selectedSquare)
+      
       let currentBoxId = at.bounds?.id
       let previousBoxId = selectedSquare?.bounds?.id
       if isPrevMarkerinList == true {
@@ -342,7 +344,6 @@ public extension W3WAppleMapHelper {
       if isPrevMarkerinList == true {
         if let previousColor = self.mapGridData?.overlayColors[previousBoxId ?? 0] {
          addMarkerAsCircle(at: selectedSquare, color: previousColor)
-      //    addSelectedMarker(at: selectedSquare, color: previousColor, type: .circle, isMarker: true, isMark: true)
         }
       }
       addSelectedMarker(at: at, color: .darkBlue, type: .square, isMarker: true, isMark: true)
@@ -394,7 +395,7 @@ public extension W3WAppleMapHelper {
   }
   
    func removeMarker(at squares: [W3WSquare]?) {
-    
+
   }
   
    func removeMarker(at suggestions: [W3WSuggestion]?) {
@@ -406,7 +407,7 @@ public extension W3WAppleMapHelper {
   }
   
    func removeMarker(at square: W3WSquare?) {
-    
+    // removeMarker(at: square)
   }
   
    func removeMarker(group: String) {
@@ -429,24 +430,22 @@ public extension W3WAppleMapHelper {
     
   }
   
-  public func getAllMarkers() -> [W3WSquare] {
+  func getAllMarkers() -> [W3WSquare] {
     return [W3WSquare]()
   }
   
-  public func removeAllMarkers() {
+  func removeAllMarkers() {
     self.markers.removeAll()
     
-    if var gridData = self.mapGridData {
+    if let gridData = self.mapGridData {
       gridData.squares.removeAll()
       gridData.markers.removeAll()
       gridData.selectedSquare = nil
       gridData.squareIsMarker = nil
       gridData.currentSquare = nil
     }
-    redrawPins()
-    redrawSquares()
   }
-  public func findMarker(by coordinates: CLLocationCoordinate2D) -> W3WSquare? {
+  func findMarker(by coordinates: CLLocationCoordinate2D) -> W3WSquare? {
     return nil
   }
 }
@@ -474,27 +473,115 @@ extension W3WAppleMapHelper {
   
   public func updateSquare(square: W3WSquare?) {
     if let square = square {
-   //   addMarker(at: square, color: nil, type: .circle)
+      self.mapGridData?.currentSquare = square
       self.select(at: square)
     }
   }
-  
-  public func updateMarkers(markers: W3WMarkersLists) {
-    removeAllMarkers()
-    let _list = markers.getLists()
-    for (_, list) in markers.getLists() {
-      for marker in list.markers {
 
-        addMarker(at: marker, color: list.color, type: .circle)
-
+  private func getNewMarkers(markersLists: W3WMarkersLists) -> W3WMarkersLists {
+      guard let gridData = self.mapGridData else {
+          return W3WMarkersLists()
       }
-    }
+      
+      // Create a new markers list to return
+      let newMarkersLists = W3WMarkersLists()
+      
+      // Clear the automatically created default list
+      newMarkersLists.lists.removeAll()
+      
+      // Process each list in the input
+      for (listName, list) in markersLists.getLists() {
+          // Skip empty lists or default list with no color
+          if list.markers.isEmpty || (listName == "default" && list.color == nil) {
+              continue
+          }
+          
+          // Create a new list for this color
+          let newList = W3WMarkerList()
+          newList.color = list.color
+          newList.type = list.type
+          
+          // Track already processed squares for this specific list
+          var listProcessedIds = Set<Int64>()
+          
+          for marker in list.markers {
+              if let bounds = marker.bounds {
+                  let squareId = bounds.id
+                  
+                  // Skip if we've already processed this ID in this list
+                  if listProcessedIds.contains(squareId) {
+                      continue
+                  }
+                  
+                  // Check if this square exists in overlay colors
+                  if let existingColor = gridData.overlayColors[squareId] {
+                      // Only include if the color is different
+                      if let listColor = list.color, !colorComponentsMatch(existingColor.cgColor, listColor.cgColor) {
+                          newList.markers.append(marker)
+                      }
+                  } else {
+                      // Square doesn't exist in overlay colors, so include it
+                      newList.markers.append(marker)
+                  }
+                  
+                  // Mark this ID as processed for this list
+                  listProcessedIds.insert(squareId)
+              } else {
+                  // No bounds, include it
+                  newList.markers.append(marker)
+              }
+          }
+          
+          // Only add lists with markers
+          if !newList.markers.isEmpty {
+              newMarkersLists.add(listName: listName, list: newList)
+          }
+      }
+      
+      return newMarkersLists
   }
+  // Helper function to compare color components
+  private func colorComponentsMatch(_ color1: CGColor, _ color2: CGColor) -> Bool {
+      // Check if color spaces match
+      guard color1.colorSpace?.model == color2.colorSpace?.model else {
+          return false
+      }
+      
+      // Get components
+      let components1 = color1.components ?? []
+      let components2 = color2.components ?? []
+      
+      // Check if component counts match
+      guard components1.count == components2.count else {
+          return false
+      }
+      
+      // Compare components with a small tolerance
+      let tolerance: CGFloat = 0.001
+      for i in 0..<components1.count {
+          if abs(components1[i] - components2[i]) > tolerance {
+              return false
+          }
+      }
+      
+      return true
+  }
+  
+  public func updateMarkers(markersLists: W3WMarkersLists) {
+      if !markersLists.getLists().isEmpty {
+          for (_, list) in markersLists.getLists() {
+              for marker in list.markers {
+                  addMarker(at: marker, color: list.color, type: list.type ?? .circle)
+              }
+          }
+      }
+  }
+  
   
   public func convertTo3wa(coordinates: CLLocationCoordinate2D, language: W3WLanguage = W3WBaseLanguage.english, completion: @escaping W3WSquareResponse ) {
     
     self.w3w.convertTo3wa(coordinates: coordinates, language: language) { [weak self]  square, error in
-      guard let self = self else { return }
+      guard self != nil else { return }
       
       if let error = error {
         W3WThread.runOnMain {
@@ -507,14 +594,6 @@ extension W3WAppleMapHelper {
       }
     }
   }
-  
-  func findSquare(_ square: W3WSquare) -> W3WSquare? {
-    return (self.mapGridData?.squares ?? []).first { s in
-      let idMatch = s.bounds?.id == square.bounds?.id
-        return idMatch
-      }
-    return nil
-  }
 }
 
 extension W3WAppleMapHelper {
@@ -526,9 +605,5 @@ extension W3WAppleMapHelper {
   public func setCenter(_ coordinate: CLLocationCoordinate2D, animated: Bool) {
     mapView?.setCenter(coordinate, animated: animated)
   }
-  
-  public func updateZoomLevel() {
-    
-  }
-  
+
 }

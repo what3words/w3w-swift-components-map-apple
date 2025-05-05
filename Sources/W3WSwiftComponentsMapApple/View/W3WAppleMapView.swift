@@ -18,9 +18,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
   
   
   public var transitionScale = W3WMapScale(pointsPerMeter: CGFloat(4.0))
-  
-  // public var transitionScaleConversion = transitionScale.value
-  
+
   public var subscriptions = W3WEventsSubscriptions()
   
   /// The map view model to use
@@ -39,10 +37,6 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
       let zoomExponent = log2(zoomScale)
       return 20 - zoomExponent
   }
-  
-  // var output: W3WEvent<W3WAppMapOutputEvent>
-  
- // var mapView: MKMapView?
   
   /// The available map types
   public var types: [W3WMapType] { get { return [.standard, .satellite, .hybrid] } }
@@ -69,17 +63,10 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     
     bind()
     
-    tesFuncs()
-    
     attachTapRecognizer()
   }
   
-  func tesFuncs() {
-    
- //   addTestMarkers()
-   
-  }
-  
+
   /// Make an Apple Map Kit Map
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
@@ -111,17 +98,13 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
   
   public func getCameraState() -> W3WMapCamera {
     let mapView = w3wHelper.mapView
-    
-    return W3WMapCamera(center: mapView?.region.center, scale: W3WMapScale(span: mapView!.region.span  , mapSize: mapView!.frame.size ))
+    return
+     W3WMapCamera(center: mapView?.region.center, scale: W3WMapScale(span: mapView!.region.span  , mapSize: mapView!.frame.size ))
+
   }
   
   public func set(scheme: W3WScheme?) {
-    
     w3wHelper.set(scheme: scheme)
-    
-    //   w3wHelper.gridData?.gridRenderer?.lineWidth = scheme?.styles?.lineThickness?.value ?? CGFloat(0.5)
-    //   w3wHelper.gridData!.gridRenderer?.strokeColor = scheme?.colors?.line?.current.uiColor
-    
   }
   
   public func updateSavedLists(markers: W3WMarkersLists) {
@@ -132,7 +115,10 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     
     subscribe(to: self.viewModel.input.markers) { [weak self] markers in
       guard let self = self else { return }
-      w3wHelper.updateMarkers(markers: markers)
+      
+      if !markers.getLists().isEmpty {
+        w3wHelper.updateMarkers(markersLists: markers)
+      }
     }
     
     subscribe(to: self.viewModel.input.camera) { [weak self] camera in
@@ -150,29 +136,6 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
       guard let self = self else { return }
     }
     
-  }
-  
-  func addTestMarkers(){
-    
-    w3wHelper.addMarker(at: "become.outlooks.rising", color: .white, type: .circle)//
-    
-    let coordinate = CLLocationCoordinate2D(
-      latitude: 10.780468,
-      longitude: 106.705438
-    )
-    
-    let span = MKCoordinateSpan(
-      latitudeDelta: 0.0002,
-      longitudeDelta: 0.0002
-    )
-    
-    let region = MKCoordinateRegion(
-      center: coordinate,
-      span: span
-    )
-  //  self.setCenter(coordinate, animated: true)
-  //  self.setRegion(region, animated: true)
-    w3wHelper.setRegion(region, animated: true)
   }
   
   func attachTapRecognizer() {
@@ -223,10 +186,6 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
         guard let self = self else { return }
         switch result {
         case .success(let square):
-          //build the list
-      //    let markersList = W3WMarkersLists(defaultColor: .w3wBrandBase)
-         // markersList.add(listName: "favorites", color: .w3wBrandBase)
-        //  markersList.add(square: square, listName: "favorites")
           self.viewModel.output.send(.selected(square))
         case .failure(let error):
            print("Show Error")
