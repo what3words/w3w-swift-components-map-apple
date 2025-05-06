@@ -55,6 +55,7 @@ extension W3WAppleMapDrawerProtocol {
     updateGridAlpha()
     mapGridData?.gridUpdateDebouncer.closure = { _ in self.makeGrid() }
     mapGridData?.gridUpdateDebouncer.execute(())
+    
   }
   
   func updateGridAlpha() {
@@ -74,7 +75,13 @@ extension W3WAppleMapDrawerProtocol {
     }
 
     mapGridData?.gridRenderer?.alpha = alpha
+
+  }
+  
+  func changeLineThicknessIfNeeded(value: CGFloat) {
     
+    let gridLineThickness: W3WLineThickness = 4.0
+    self.mapGridData?.mapGridLineThickness.send(gridLineThickness)
   }
   
   func makeGrid() {
@@ -84,7 +91,7 @@ extension W3WAppleMapDrawerProtocol {
     
     // call w3w api for lines, if the area is not too great
     if let distance = mapGridData?.w3w?.distance(from: sw, to: ne) {
-      if distance < W3WSettings.maxMetersDiagonalForGrid {
+      if distance < W3WSettings.maxMetersDiagonalForGrid && distance > 0.0 {
         
         mapGridData?.w3w?.gridSection(southWest:sw, northEast:ne) { lines, error in
           self.makeNewGrid(lines: lines)
@@ -131,8 +138,8 @@ extension W3WAppleMapDrawerProtocol {
     
     if let gridLines = overlay as? W3WMapGridLines {
       mapGridData?.gridRenderer = W3WMapGridRenderer(multiPolyline: gridLines)
-      mapGridData?.gridRenderer?.strokeColor = mapGridData?.mapGridColor.value.uiColor
-      mapGridData?.gridRenderer?.lineWidth =  mapGridData?.mapGridLineThickness.value.value ?? CGFloat(0.5)
+      mapGridData?.gridRenderer?.strokeColor = mapGridData?.scheme?.colors?.line?.uiColor
+      mapGridData?.gridRenderer?.lineWidth =  mapGridData?.mapGridLineThickness.value.value ?? CGFloat(0.7)
       updateGridAlpha()
       return mapGridData?.gridRenderer
     }
@@ -147,7 +154,8 @@ extension W3WAppleMapDrawerProtocol {
     if let square = overlay as? W3WMapSquareLines {
       let squareRenderer = W3WMapSquaresRenderer(overlay: square)
       
-      let boxId = square.box.id //current square renderer
+      let boxId = square.box.id
+      
       let isSelectedSquare = mapGridData.selectedSquare?.bounds?.id == boxId
       
       let  isMarker = mapGridData.markers.contains(where: { $0.bounds?.id == boxId })
@@ -163,29 +171,26 @@ extension W3WAppleMapDrawerProtocol {
       let w3wImage: UIImage?
       w3wImage = W3WImageCache.shared.getImage(for: bgSquareColor ?? .w3wBrandBase, size: CGSize(width: 40, height: 40)) ?? W3WImageCache.shared.getImage(for: .w3wBrandBase, size: CGSize(width: 40, height: 40))
       
+      squareRenderer.strokeColor = mapGridData.scheme?.colors?.line?.uiColor
+      squareRenderer.lineWidth =  mapGridData.mapSquareLineThickness.value.value
+      
       if (isSelectedSquare) {
         if (isMarker == true) {
           squareRenderer.lineWidth = 1.0
-          squareRenderer.strokeColor = .black
           
           if (isSquare == true) { // in list
             squareRenderer.setSquareImage(w3wImage)
           }
         }
         else {
-          squareRenderer.strokeColor = W3WColor.mediumGrey.uiColor
-          squareRenderer.lineWidth = 0.1
           squareRenderer.setSquareImage(w3wImage)
         }
         
       } else {
-        squareRenderer.strokeColor = W3WColor.mediumGrey.uiColor
-        squareRenderer.lineWidth = 0.1
         squareRenderer.setSquareImage(w3wImage)
       }
       
       mapGridData.squareRenderer = squareRenderer
-      
       return mapGridData.squareRenderer
       
     }
@@ -359,7 +364,7 @@ extension W3WAppleMapDrawerProtocol {
                 let se = CLLocationCoordinate2D(latitude: sw.latitude, longitude: ne.longitude)
                 let polyline = W3WMapSquareLines(coordinates: [nw, ne, se, sw, nw], count: 5)
 
-                let boxId = square.bounds?.id ?? 0//polyline.box.id ?? 0
+                let boxId = square.bounds?.id ?? 0
                 let color = colors[boxId]
             
                 boxes.append((polyline: polyline, color: color))
@@ -391,7 +396,6 @@ extension W3WAppleMapDrawerProtocol {
       }
       W3WThread.runOnMain {
         self.removeColoredSquare(square)
-       // self.removeSquareOverlay(square)
         self.updateSquares()
       }
       
@@ -401,7 +405,6 @@ extension W3WAppleMapDrawerProtocol {
   public func removeColoredSquare(_ square: W3WSquare) {
     
     guard let gridData = self.mapGridData else { return }
-    
     if let id = square.bounds?.id {
       gridData.overlayColors.removeValue(forKey: id)
 
@@ -744,7 +747,6 @@ extension W3WAppleMapDrawerProtocol {
   /// coordiantes, and does nothing if neither is present
   /// this is the one that actually does the work.  The other addAnnotations calls end up calling this one.
   func addAnnotation(square: W3WSquare, color: W3WColor? = nil, type: W3WMarkerType, isMarker: Bool? = false, isMark: Bool? = false, isSaved: Bool? = false) {
- //   W3WThread.runOnMain {
       W3WThread.runInBackground {
           W3WThread.runOnMain {
             self.removeMarker(at: square)
@@ -869,7 +871,6 @@ extension W3WAppleMapDrawerProtocol {
     }
   }
 }
-
 
 extension W3WAppleMapDrawerProtocol {
   

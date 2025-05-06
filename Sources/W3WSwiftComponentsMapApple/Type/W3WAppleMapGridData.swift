@@ -22,13 +22,13 @@ public class W3WAppleMapGridData {
    let squareColor    = W3WLive<W3WColor>(.w3wBrandBase)
   
    let mapGridColor   = W3WLive<W3WColor>(.mediumGrey)
-   let mapGridLineThickness = W3WLive<W3WLineThickness>(0.5)
+   let mapGridLineThickness = W3WLive<W3WLineThickness>(0.7)
   
    let mapSquareColor = W3WLive<W3WColor>(.black)
    let mapSquareLineThickness = W3WLive<W3WLineThickness>(0.1)
   
-   let selectedSquareBorderColor = W3WLive<W3WColor>(.black)
-   let selectedSquareThickness = W3WLive<W3WLineThickness>(0.5)
+//   let selectedSquareBorderColor = W3WLive<W3WColor>(.black)
+//   let selectedSquareThickness = W3WLive<W3WLineThickness>(0.5)
   
    let pinWidth = CGFloat(30.0)
    let pinHeight  = CGFloat(30.0)
@@ -105,6 +105,7 @@ public class W3WAppleMapGridData {
     self.mapGridColorListener()
     self.squareColorListener()
     self.squareLineThicknessListener()
+    self.gridLineThicknessListener()
   }
   
   private func mapGridColorListener() {
@@ -127,6 +128,14 @@ public class W3WAppleMapGridData {
     mapSquareLineThickness
       .sink { [weak self] lineThickness in
         self?.squareRendererPointer?.lineWidth = lineThickness.value
+      }
+      .store(in: &cancellables)
+  }
+  
+  private func gridLineThicknessListener() {
+    mapGridLineThickness
+      .sink { [weak self] lineThickness in
+        self?.gridRenderer?.lineWidth = lineThickness.value
       }
       .store(in: &cancellables)
   }

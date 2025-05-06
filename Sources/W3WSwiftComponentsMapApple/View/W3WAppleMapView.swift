@@ -9,7 +9,7 @@ import MapKit
 import W3WSwiftCore
 import W3WSwiftComponentsMap
 import W3WSwiftCore
-import W3WSwiftApi
+//import W3WSwiftApi
 import W3WSwiftDesign
 
 
@@ -31,12 +31,6 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
   private var w3wHelper: W3WHelper { helper as! W3WHelper }
   
   private var onError: W3WMapErrorHandler = { _ in }
-  
-  var zoomLevel: Double {
-      let zoomScale = self.visibleMapRect.size.width / Double(self.frame.size.width)
-      let zoomExponent = log2(zoomScale)
-      return 20 - zoomExponent
-  }
   
   /// The available map types
   public var types: [W3WMapType] { get { return [.standard, .satellite, .hybrid] } }
@@ -99,7 +93,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
   public func getCameraState() -> W3WMapCamera {
     let mapView = w3wHelper.mapView
     return
-     W3WMapCamera(center: mapView?.region.center, scale: W3WMapScale(span: mapView!.region.span  , mapSize: mapView!.frame.size ))
+     W3WMapCamera(center: mapView?.region.center, scale: W3WMapScale(span: mapView!.region.span  , mapSize: mapView!.frame.size))
 
   }
   
@@ -260,5 +254,6 @@ extension W3WAppleMapView: MKMapViewDelegate {
 
     w3wHelper.mapView(mapView, didSelect: view)
   }
-  
+
 }
+

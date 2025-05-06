@@ -18,7 +18,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   
   public var mapGridData: W3WAppleMapGridData?
   
-  public var scheme: W3WScheme? = .w3w
+  public var scheme: W3WScheme? =  W3WTheme.what3words.mapScheme()
 
   public var region: MKCoordinateRegion {
     return mapView?.region ?? MKCoordinateRegion()
@@ -74,9 +74,16 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
     }
   }
   
-  func setGridLine() {
+
+  func setGridLineThickness(value: W3WLineThickness) {
     if let gridData = mapGridData {
-      gridData.mapGridLineThickness.send(4.0)
+      gridData.mapGridLineThickness.send(value)
+    }
+  }
+  
+  func setSquareLineThickness(value: W3WLineThickness) {
+    if let gridData = mapGridData {
+      gridData.mapSquareLineThickness.send(value)
     }
   }
   
@@ -112,12 +119,9 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
     }
   }
   
-  private func calculateZoomLevel(_ span: MKCoordinateSpan) -> Double {
-      return log2(360.0 / span.latitudeDelta)
-  }
-  
   public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
     updateMap()
+   // changeLineThicknessIfNeeded()
   }
 
   /// hijack this delegate call and update the grid, then pass control to the external delegate
@@ -127,7 +131,6 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   
   /// hijack this delegate call and update the grid, then pass control to the external delegate
   public func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-
     updateMap()
   }
 
@@ -315,7 +318,7 @@ public extension W3WAppleMapHelper {
           removeSelectedSquare(at: selectedSquare)
         }
 
-        addSelectedMarker(at: at, color: .darkBlue, type: .square, isMarker: true, isMark: true)
+        addSelectedMarker(at: at, color: scheme?.colors?.border, type: .square, isMarker: true, isMark: true)
         self.mapGridData?.selectedSquare = at
         
         return
@@ -346,7 +349,7 @@ public extension W3WAppleMapHelper {
          addMarkerAsCircle(at: selectedSquare, color: previousColor)
         }
       }
-      addSelectedMarker(at: at, color: .darkBlue, type: .square, isMarker: true, isMark: true)
+      addSelectedMarker(at: at, color: scheme?.colors?.border, type: .square, isMarker: true, isMark: true)
     }
     
     self.mapGridData?.selectedSquare = at
@@ -568,7 +571,8 @@ extension W3WAppleMapHelper {
   }
   
   public func updateMarkers(markersLists: W3WMarkersLists) {
-      if !markersLists.getLists().isEmpty {
+    let newMarkers = self.getNewMarkers(markersLists: markersLists)
+      if !newMarkers.getLists().isEmpty {
           for (_, list) in markersLists.getLists() {
               for marker in list.markers {
                   addMarker(at: marker, color: list.color, type: list.type ?? .circle)
@@ -604,6 +608,22 @@ extension W3WAppleMapHelper {
 
   public func setCenter(_ coordinate: CLLocationCoordinate2D, animated: Bool) {
     mapView?.setCenter(coordinate, animated: animated)
+  }
+
+}
+
+extension W3WAppleMapHelper {
+
+  func changeLineThicknessIfNeeded() {
+    
+    let scale = W3WMapScale(span: mapView!.region.span  , mapSize: mapView!.frame.size)
+    
+    let gridLineThickness = scale.gridLineThickness()
+    let squareLineThickness = scale.squareLineThickness()
+
+    self.setGridLineThickness(value: gridLineThickness)
+    self.setSquareLineThickness(value: squareLineThickness)
+
   }
 
 }
