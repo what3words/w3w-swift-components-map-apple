@@ -112,8 +112,8 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   public func getType() -> W3WMapType {
     switch  self.mapType {
       case .standard: return "standard"
-      case .satellite: return "hybridFlyover"
-      case .hybrid: return "hybrid"
+      case .satellite: return "satellite"
+      case .hybrid: return "hybridFlyover"
 
       default: return "standard"
     }
@@ -121,7 +121,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   
   public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
     updateMap()
-    changeLineThicknessIfNeeded()
+   // changeLineThicknessIfNeeded()
   }
 
   /// hijack this delegate call and update the grid, then pass control to the external delegate
@@ -317,8 +317,8 @@ public extension W3WAppleMapHelper {
         else{
           removeSelectedSquare(at: selectedSquare)
         }
-
-        addSelectedMarker(at: at, color: scheme?.colors?.border, type: .square, isMarker: true, isMark: true)
+        let color: W3WColor =  self.mapGridData?.scheme?.colors?.border ?? .black
+        addSelectedMarker(at: at, color: nil, type: .square, isMarker: true, isMark: true)
         self.mapGridData?.selectedSquare = at
         
         return
@@ -349,7 +349,10 @@ public extension W3WAppleMapHelper {
          addMarkerAsCircle(at: selectedSquare, color: previousColor)
         }
       }
-      addSelectedMarker(at: at, color: scheme?.colors?.border, type: .square, isMarker: true, isMark: true)
+
+      let color: W3WColor =  self.mapGridData?.scheme?.colors?.border ?? .black
+
+      addSelectedMarker(at: at, color: nil, type: .square, isMarker: true, isMark: true)
     }
     
     self.mapGridData?.selectedSquare = at
@@ -443,16 +446,24 @@ public extension W3WAppleMapHelper {
     if let gridData = self.mapGridData {
       gridData.squares.removeAll()
       gridData.markers.removeAll()
-      gridData.selectedSquare = nil
-      gridData.squareIsMarker = nil
-      gridData.currentSquare = nil
+    //  gridData.selectedSquare = nil
+    //  gridData.squareIsMarker = nil
+    //  gridData.currentSquare = nil
       gridData.overlayColors = [:]
+      gridData.previousStateHash = nil
       
       for annotation in annotations {
         removeAnnotation(annotation)
       }
     }
   }
+  
+  func redraw(){
+    redrawGrid()
+    redrawSquares()
+    redrawPins()
+  }
+  
   func findMarker(by coordinates: CLLocationCoordinate2D) -> W3WSquare? {
     return nil
   }
@@ -548,6 +559,7 @@ extension W3WAppleMapHelper {
       
       return newMarkersLists
   }
+  
   // Helper function to compare color components
   private func colorComponentsMatch(_ color1: CGColor, _ color2: CGColor) -> Bool {
       // Check if color spaces match
@@ -615,22 +627,4 @@ extension W3WAppleMapHelper {
   public func setCenter(_ coordinate: CLLocationCoordinate2D, animated: Bool) {
     mapView?.setCenter(coordinate, animated: animated)
   }
-}
-
-extension W3WAppleMapHelper {
-
-  func changeLineThicknessIfNeeded() {
-    
-    let scale = W3WMapScale(span: mapView!.region.span  , mapSize: mapView!.frame.size)
-    
-    let gridLineThickness = scale.gridLineThickness()
-    let squareLineThickness = scale.squareLineThickness()
-
-    self.setGridLineThickness(value: gridLineThickness)
-    self.setSquareLineThickness(value: squareLineThickness)
-    
-    print("gridLineThickness: \(gridLineThickness)")
-    print("squareLineThickness: \(squareLineThickness)")
-  }
-
 }

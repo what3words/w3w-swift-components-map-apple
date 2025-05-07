@@ -22,13 +22,10 @@ public class W3WAppleMapGridData {
    let squareColor    = W3WLive<W3WColor>(.w3wBrandBase)
   
    let mapGridColor   = W3WLive<W3WColor>(.mediumGrey)
-   let mapGridLineThickness = W3WLive<W3WLineThickness>(0.7)
+   let mapGridLineThickness = W3WLive<W3WLineThickness>(0.5)
   
-   let mapSquareColor = W3WLive<W3WColor>(.black)
+//   let mapSquareColor = W3WLive<W3WColor>(.black)
    let mapSquareLineThickness = W3WLive<W3WLineThickness>(0.1)
-  
-//   let selectedSquareBorderColor = W3WLive<W3WColor>(.black)
-//   let selectedSquareThickness = W3WLive<W3WLineThickness>(0.5)
   
    let pinWidth = CGFloat(30.0)
    let pinHeight  = CGFloat(30.0)
@@ -59,8 +56,6 @@ public class W3WAppleMapGridData {
   var squareIsMarker: W3WSquare? = nil
   
   var currentSquare: W3WSquare? = nil
-  
-  var isUpdatingSquares = false
   
   var overlayColors: [Int64: W3WColor] = [:]
   

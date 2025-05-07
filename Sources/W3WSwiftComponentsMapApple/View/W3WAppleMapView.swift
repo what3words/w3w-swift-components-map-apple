@@ -55,8 +55,8 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     bind()
     
     attachTapRecognizer()
+    
   }
-
 
   /// Make an Apple Map Kit Map
   required init?(coder: NSCoder) {
@@ -81,7 +81,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     switch type {
     case .standard: return "standard"
     case .satellite: return "satellite"
-    case .hybrid: return "hybrid"
+    case .hybrid: return "hybridFlyover"
       
     default: return "hybridFlyover"
     }
@@ -194,9 +194,6 @@ extension W3WAppleMapView: MKMapViewDelegate {
   public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
     let currentMapScale = W3WMapScale(span: mapView.region.span, mapSize: mapView.frame.size)
 
-    if currentMapScale.value > transitionScale.value {
-      //update map
-    }
     w3wHelper.mapViewDidChangeVisibleRegion(mapView)
     viewModel.output.send(.camera(getCameraState()))
 
@@ -230,17 +227,12 @@ extension W3WAppleMapView: MKMapViewDelegate {
   
   public func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
 
-    //test for zoomslevel
-    let mapRect = mapView.visibleMapRect
-    let mapWidthInPoints = mapView.frame.size.width
-    let zoomScale = mapRect.size.width / Double(mapWidthInPoints)
-    
     w3wHelper.mapView(mapView, regionDidChangeAnimated: animated)
     
   }
   
   public func mapView(_ mapView: MKMapView, mapTypeChanged type: MKMapType) {
-    
+    w3wHelper.mapView(mapView, mapTypeChanged: type)
   }
   
   //when marker is being selected

@@ -154,7 +154,7 @@ extension W3WAppleMapDrawerProtocol {
       
       let  isSquare = mapGridData.squares.contains(where: { $0.bounds?.id == boxId })
       
-      var bgSquareColor: W3WColor? = .w3wBrandBase
+      var bgSquareColor: W3WColor?
       
       if let color = mapGridData.overlayColors[boxId] {
         bgSquareColor = color
@@ -162,7 +162,7 @@ extension W3WAppleMapDrawerProtocol {
       
       let w3wImage: UIImage?
       w3wImage = W3WImageCache.shared.getImage(for: bgSquareColor ?? .w3wBrandBase, size: CGSize(width: 40, height: 40)) ?? W3WImageCache.shared.getImage(for: .w3wBrandBase, size: CGSize(width: 40, height: 40))
-      
+
       squareRenderer.strokeColor = mapGridData.scheme?.colors?.line?.uiColor
       squareRenderer.lineWidth =  mapGridData.mapSquareLineThickness.value.value
       
@@ -179,7 +179,10 @@ extension W3WAppleMapDrawerProtocol {
         }
         
       } else {
-        squareRenderer.setSquareImage(w3wImage)
+        
+        if (bgSquareColor != nil) {
+          squareRenderer.setSquareImage(w3wImage)
+        }
       }
       
       mapGridData.squareRenderer = squareRenderer
@@ -299,13 +302,13 @@ extension W3WAppleMapDrawerProtocol {
 
         let group = DispatchGroup()
     
-        var colors = [Int64: W3WColor]()
+        var squareId_color = [Int64: W3WColor]()
         
         // Enter the group before starting work
         group.enter()
         // Get colors from main thread
         W3WThread.runOnMain {
-            colors = gridData.overlayColors
+          squareId_color = gridData.overlayColors
             group.leave() // Signal that colors are ready
         }
         // Wait for colors to be copied
@@ -327,7 +330,7 @@ extension W3WAppleMapDrawerProtocol {
         }
         
         // Hash the colors
-        for (id, color) in colors {
+        for (id, color) in squareId_color {
             stateHasher.combine(id)
             stateHasher.combine(color.description)
         }
@@ -336,6 +339,7 @@ extension W3WAppleMapDrawerProtocol {
         if let selectedId = gridData.selectedSquare?.bounds?.id {
             stateHasher.combine(selectedId)
         }
+    
         let currentStateHash = stateHasher.finalize()
     
         // If nothing has changed, skip the update
@@ -357,7 +361,7 @@ extension W3WAppleMapDrawerProtocol {
                 let polyline = W3WMapSquareLines(coordinates: [nw, ne, se, sw, nw], count: 5)
 
                 let boxId = square.bounds?.id ?? 0
-                let color = colors[boxId]
+                let color = squareId_color[boxId]
             
                 boxes.append((polyline: polyline, color: color))
             }
@@ -531,7 +535,7 @@ extension W3WAppleMapDrawerProtocol {
       let pinImageWidth = squareSize
       let pinImageHeight = squareSize
       
-      pinImage = W3WImage(drawing: .mapPin, colors: .standardMaps.with(background: color).with(foreground: color?.complimentaryTextColor()))
+      pinImage = W3WImage(drawing: .mapPin, colors: .standard.with(background: color).with(foreground: color?.complimentaryTextColor()))
         .get(size: W3WIconSize(value: CGSize(width: pinImageWidth  , height: pinImageHeight)))
       
       centerOffset = CGPoint(x: 0.0, y: (-20.0))
