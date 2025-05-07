@@ -9,13 +9,10 @@ import MapKit
 import W3WSwiftCore
 import W3WSwiftComponentsMap
 import W3WSwiftCore
-//import W3WSwiftApi
 import W3WSwiftDesign
-
 
 /// An Apple Map Kit Map
 public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapViewProtocol, W3WEventSubscriberProtocol {
-  
   
   public var transitionScale = W3WMapScale(pointsPerMeter: CGFloat(4.0))
 
@@ -59,7 +56,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     
     attachTapRecognizer()
   }
-  
+
 
   /// Make an Apple Map Kit Map
   required init?(coder: NSCoder) {
@@ -113,7 +110,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
       if !markers.getLists().isEmpty {
         w3wHelper.updateMarkers(markersLists: markers)
       }
-    }
+    } 
     
     subscribe(to: self.viewModel.input.camera) { [weak self] camera in
       guard let self = self else { return }
@@ -251,7 +248,6 @@ extension W3WAppleMapView: MKMapViewDelegate {
     if let markerView =  view.annotation as? W3WAppleMapAnnotation {
       
     }
-
     w3wHelper.mapView(mapView, didSelect: view)
   }
 

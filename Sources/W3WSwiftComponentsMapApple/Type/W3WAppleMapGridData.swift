@@ -66,7 +66,6 @@ public class W3WAppleMapGridData {
   
   var previousStateHash: Int? = 0
 
-  
   var scheme: W3WScheme? = .w3w
   
   var mapZoomLevel = CGFloat(0.0)

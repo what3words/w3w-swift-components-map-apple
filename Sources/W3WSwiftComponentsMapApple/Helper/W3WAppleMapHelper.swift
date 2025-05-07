@@ -18,7 +18,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   
   public var mapGridData: W3WAppleMapGridData?
   
-  public var scheme: W3WScheme? =  W3WTheme.what3words.mapScheme()
+  public var scheme: W3WScheme? = W3WTheme.what3words.mapScheme()
 
   public var region: MKCoordinateRegion {
     return mapView?.region ?? MKCoordinateRegion()
@@ -446,6 +446,11 @@ public extension W3WAppleMapHelper {
       gridData.selectedSquare = nil
       gridData.squareIsMarker = nil
       gridData.currentSquare = nil
+      gridData.overlayColors = [:]
+      
+      for annotation in annotations {
+        removeAnnotation(annotation)
+      }
     }
   }
   func findMarker(by coordinates: CLLocationCoordinate2D) -> W3WSquare? {
@@ -571,8 +576,9 @@ extension W3WAppleMapHelper {
   }
   
   public func updateMarkers(markersLists: W3WMarkersLists) {
-    let newMarkers = self.getNewMarkers(markersLists: markersLists)
-      if !newMarkers.getLists().isEmpty {
+   // let newMarkers = self.getNewMarkers(markersLists: markersLists)
+    self.removeAllMarkers()
+      if !markersLists.getLists().isEmpty {
           for (_, list) in markersLists.getLists() {
               for marker in list.markers {
                   addMarker(at: marker, color: list.color, type: list.type ?? .circle)
@@ -583,7 +589,7 @@ extension W3WAppleMapHelper {
   
   
   public func convertTo3wa(coordinates: CLLocationCoordinate2D, language: W3WLanguage = W3WBaseLanguage.english, completion: @escaping W3WSquareResponse ) {
-    
+  
     self.w3w.convertTo3wa(coordinates: coordinates, language: language) { [weak self]  square, error in
       guard self != nil else { return }
       
@@ -609,7 +615,6 @@ extension W3WAppleMapHelper {
   public func setCenter(_ coordinate: CLLocationCoordinate2D, animated: Bool) {
     mapView?.setCenter(coordinate, animated: animated)
   }
-
 }
 
 extension W3WAppleMapHelper {

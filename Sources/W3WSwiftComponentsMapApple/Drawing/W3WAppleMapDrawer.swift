@@ -46,7 +46,6 @@ extension W3WAppleMapDrawerProtocol {
         
         redrawPins()
       }
-      
       mapGridData?.lastZoomPointsPerSquare = squareSize
     }
   }
@@ -968,18 +967,6 @@ extension W3WAppleMapDrawerProtocol {
     }
     return nil
   }
-
-  /// remove what3words annotations from the map if they are present
-  public func removeAllMarkers() {
-    for annotation in annotations {
-      if let w3wAnnotation = annotation as? W3WAppleMapAnnotation {
-        removeAnnotation(w3wAnnotation)
-        if let square = w3wAnnotation.square {
-        }
-      }
-    }
-  }
-  
   public func getAllMarkers() -> [W3WSquare] {
     var squares = [W3WSquare]()
     
@@ -1033,18 +1020,6 @@ extension W3WAppleMapDrawerProtocol {
       if !exists {
         gridData.squares.append(square)
       }
-    }
-  }
-  
-
-
-  func removeAllSquares() {
-    if var gridData = self.mapGridData {
-      gridData.squares.removeAll()
-      gridData.markers.removeAll()
-      gridData.selectedSquare = nil
-      gridData.squareIsMarker = nil
-      gridData.currentSquare = nil
     }
   }
 }
