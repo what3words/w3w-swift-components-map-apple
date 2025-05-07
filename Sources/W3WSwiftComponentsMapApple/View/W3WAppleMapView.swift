@@ -252,4 +252,3 @@ extension W3WAppleMapView: MKMapViewDelegate {
   }
 
 }
-

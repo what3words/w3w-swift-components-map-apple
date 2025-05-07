@@ -121,7 +121,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   
   public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
     updateMap()
-   // changeLineThicknessIfNeeded()
+    changeLineThicknessIfNeeded()
   }
 
   /// hijack this delegate call and update the grid, then pass control to the external delegate
@@ -628,7 +628,9 @@ extension W3WAppleMapHelper {
 
     self.setGridLineThickness(value: gridLineThickness)
     self.setSquareLineThickness(value: squareLineThickness)
-
+    
+    print("gridLineThickness: \(gridLineThickness)")
+    print("squareLineThickness: \(squareLineThickness)")
   }
 
 }

@@ -74,15 +74,8 @@ extension W3WAppleMapDrawerProtocol {
     }
 
     mapGridData?.gridRenderer?.alpha = alpha
+  }
 
-  }
-  
-  func changeLineThicknessIfNeeded(value: CGFloat) {
-    
-    let gridLineThickness: W3WLineThickness = 4.0
-    self.mapGridData?.mapGridLineThickness.send(gridLineThickness)
-  }
-  
   func makeGrid() {
     
     let sw = CLLocationCoordinate2D(latitude: region.center.latitude - region.span.latitudeDelta * 3.0, longitude: region.center.longitude - region.span.longitudeDelta * 3.0)
