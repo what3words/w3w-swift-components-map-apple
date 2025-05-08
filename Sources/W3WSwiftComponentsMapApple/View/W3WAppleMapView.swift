@@ -193,7 +193,7 @@ extension W3WAppleMapView: MKMapViewDelegate {
     let currentMapScale = W3WMapScale(span: mapView.region.span, mapSize: mapView.frame.size)
 
     w3wHelper.mapViewDidChangeVisibleRegion(mapView)
-   // viewModel.output.send(.camera(getCameraState()))
+    viewModel.output.send(.camera(getCameraState()))
 
   }
 
