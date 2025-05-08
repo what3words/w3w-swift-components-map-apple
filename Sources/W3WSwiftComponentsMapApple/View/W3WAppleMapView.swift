@@ -55,7 +55,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     bind()
     
     attachTapRecognizer()
-    
+ 
   }
 
   /// Make an Apple Map Kit Map
@@ -91,7 +91,6 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     let mapView = w3wHelper.mapView
     return
      W3WMapCamera(center: mapView?.region.center, scale: W3WMapScale(span: mapView!.region.span  , mapSize: mapView!.frame.size))
-
   }
   
   public func set(scheme: W3WScheme?) {
@@ -114,8 +113,7 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     
     subscribe(to: self.viewModel.input.camera) { [weak self] camera in
       guard let self = self else { return }
-      
-      w3wHelper.updateCamera(camera: camera)
+     w3wHelper.updateCamera(camera: camera)
     }
     
     subscribe(to: self.viewModel.input.selected) { [weak self] square in
@@ -195,7 +193,7 @@ extension W3WAppleMapView: MKMapViewDelegate {
     let currentMapScale = W3WMapScale(span: mapView.region.span, mapSize: mapView.frame.size)
 
     w3wHelper.mapViewDidChangeVisibleRegion(mapView)
-    viewModel.output.send(.camera(getCameraState()))
+   // viewModel.output.send(.camera(getCameraState()))
 
   }
 

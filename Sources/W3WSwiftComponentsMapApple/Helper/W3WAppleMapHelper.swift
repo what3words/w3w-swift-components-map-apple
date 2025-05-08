@@ -115,7 +115,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
       case .satellite: return "satellite"
       case .hybrid: return "hybridFlyover"
 
-      default: return "standard"
+      default: return "hybridFlyover"
     }
   }
   
@@ -315,11 +315,11 @@ public extension W3WAppleMapHelper {
           }
         }
         else{
-          removeSelectedSquare(at: selectedSquare)
+            removeSelectedSquare(at: selectedSquare)
         }
         let color: W3WColor =  self.mapGridData?.scheme?.colors?.border ?? .black
-        addSelectedMarker(at: at, color: nil, type: .square, isMarker: true, isMark: true)
-        self.mapGridData?.selectedSquare = at
+            addSelectedMarker(at: at, color: color, type: .square, isMarker: true, isMark: true)
+            self.mapGridData?.selectedSquare = at
         
         return
       }
@@ -350,9 +350,8 @@ public extension W3WAppleMapHelper {
         }
       }
 
-      let color: W3WColor =  self.mapGridData?.scheme?.colors?.border ?? .black
-
-      addSelectedMarker(at: at, color: nil, type: .square, isMarker: true, isMark: true)
+      let color: W3WColor = self.mapGridData?.scheme?.colors?.border ?? .black
+      addSelectedMarker(at: at, color: color, type: .square, isMarker: true, isMark: true)
     }
     
     self.mapGridData?.selectedSquare = at
@@ -446,7 +445,7 @@ public extension W3WAppleMapHelper {
     if let gridData = self.mapGridData {
       gridData.squares.removeAll()
       gridData.markers.removeAll()
-    //  gridData.selectedSquare = nil
+     // gridData.selectedSquare = nil
     //  gridData.squareIsMarker = nil
     //  gridData.currentSquare = nil
       gridData.overlayColors = [:]
@@ -590,6 +589,7 @@ extension W3WAppleMapHelper {
   public func updateMarkers(markersLists: W3WMarkersLists) {
    // let newMarkers = self.getNewMarkers(markersLists: markersLists)
     self.removeAllMarkers()
+    select(at: self.mapGridData?.selectedSquare ?? W3WBaseSquare())
       if !markersLists.getLists().isEmpty {
           for (_, list) in markersLists.getLists() {
               for marker in list.markers {
@@ -597,6 +597,7 @@ extension W3WAppleMapHelper {
               }
           }
       }
+    
   }
   
   

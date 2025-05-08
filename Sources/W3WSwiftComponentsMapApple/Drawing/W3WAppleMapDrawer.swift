@@ -131,7 +131,7 @@ extension W3WAppleMapDrawerProtocol {
     if let gridLines = overlay as? W3WMapGridLines {
       mapGridData?.gridRenderer = W3WMapGridRenderer(multiPolyline: gridLines)
       mapGridData?.gridRenderer?.strokeColor = mapGridData?.scheme?.colors?.line?.uiColor
-      mapGridData?.gridRenderer?.lineWidth =  mapGridData?.mapGridLineThickness.value.value ?? CGFloat(0.7)
+      mapGridData?.gridRenderer?.lineWidth =  mapGridData?.mapGridLineThickness.value.value ?? CGFloat(0.5)
       updateGridAlpha()
       return mapGridData?.gridRenderer
     }
@@ -164,12 +164,11 @@ extension W3WAppleMapDrawerProtocol {
       w3wImage = W3WImageCache.shared.getImage(for: bgSquareColor ?? .w3wBrandBase, size: CGSize(width: 40, height: 40)) ?? W3WImageCache.shared.getImage(for: .w3wBrandBase, size: CGSize(width: 40, height: 40))
 
       squareRenderer.strokeColor = mapGridData.scheme?.colors?.line?.uiColor
-      squareRenderer.lineWidth =  mapGridData.mapSquareLineThickness.value.value
-      
+      squareRenderer.lineWidth =  0.1
+
       if (isSelectedSquare) {
         if (isMarker == true) {
           squareRenderer.lineWidth = 1.0
-          
           if (isSquare == true) { // in list
             squareRenderer.setSquareImage(w3wImage)
           }
@@ -179,9 +178,19 @@ extension W3WAppleMapDrawerProtocol {
         }
         
       } else {
-        
-        if (bgSquareColor != nil) {
-          squareRenderer.setSquareImage(w3wImage)
+
+        if (isMarker == true) {
+          squareRenderer.strokeColor = mapGridData.scheme?.colors?.line?.uiColor
+          squareRenderer.lineWidth = 1.0
+          
+          if (bgSquareColor != nil) {
+            squareRenderer.setSquareImage(w3wImage)
+          }
+        }
+        else{
+          if (bgSquareColor != nil) {
+            squareRenderer.setSquareImage(w3wImage)
+          }
         }
       }
       
@@ -344,7 +353,7 @@ extension W3WAppleMapDrawerProtocol {
     
         // If nothing has changed, skip the update
         if currentStateHash == gridData.previousStateHash && gridData.previousStateHash != 0  && gridData.squares.count != 0 {
-            return
+           // return
         }
         
         // Update hash for next comparison
