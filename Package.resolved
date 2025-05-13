@@ -1,5 +1,5 @@
 {
-  "originHash" : "290e325529555297e0983cdcd68b712414da1d8a790e623a1eebe2334560ccc6",
+  "originHash" : "5f87e22a75273eac5ad2439f648625f1edf7573204cc78abbace21d06a81c5a8",
   "pins" : [
     {
       "identity" : "w3w-swift-app-events",
@@ -17,6 +17,15 @@
       "state" : {
         "branch" : "staging",
         "revision" : "9823e608625044c42776a11b745c0ffc7b018021"
+      }
+    },
+    {
+      "identity" : "w3w-swift-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/what3words/w3w-swift-core.git",
+      "state" : {
+        "branch" : "staging",
+        "revision" : "b00c40eeb249645138e705a3def58eee20f73fb0"
       }
     },
     {

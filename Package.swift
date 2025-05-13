@@ -16,7 +16,7 @@ let package = Package(
     .package(url: "https://github.com/what3words/w3w-swift-themes.git", "1.0.0"..<"2.0.0"),
     .package(url: "https://github.com/what3words/w3w-swift-design.git", "1.0.0"..<"2.0.0"),
     .package(url: "https://github.com/what3words/w3w-swift-components-map.git", branch: "staging"),
-    .package(path: "../w3w-swift-core"),
+    .package(url: "https://github.com/what3words/w3w-swift-core.git", branch: "task/MT-7610-apple-map-view-package")
   ],
 
   targets: [
