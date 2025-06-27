@@ -586,21 +586,24 @@ extension W3WAppleMapHelper {
       return true
   }
   
-  public func updateMarkers(markersLists: W3WMarkersLists) {
-   // let newMarkers = self.getNewMarkers(markersLists: markersLists)
-    self.removeAllMarkers()
-    select(at: self.mapGridData?.selectedSquare ?? W3WBaseSquare())
-      if !markersLists.getLists().isEmpty {
-          for (_, list) in markersLists.getLists() {
-              for marker in list.markers {
-                  addMarker(at: marker, color: list.color, type: list.type ?? .circle)
-              }
-          }
-      }
+	public func updateMarkers(markersLists: W3WMarkersLists) {
+		removeAllMarkers()
+		select(at: mapGridData?.selectedSquare ?? W3WBaseSquare())
+		
+		let defaultColor = W3WColor(light: .darkBlue, dark: .white)
+		let defaultType: W3WMarkerType = .circle
+		
+		let lists = markersLists.getLists()
+		
+		for list in lists.values {
+			for marker in list.markers {
+				let color = list.color ?? defaultColor
+				let type  = list.type  ?? defaultType
+				addMarker(at: marker, color: color, type: type)
+			}
+		}
+	}
     
-  }
-  
-  
   public func convertTo3wa(coordinates: CLLocationCoordinate2D, language: W3WLanguage = W3WBaseLanguage.english, completion: @escaping W3WSquareResponse ) {
   
     self.w3w.convertTo3wa(coordinates: coordinates, language: language) { [weak self]  square, error in
