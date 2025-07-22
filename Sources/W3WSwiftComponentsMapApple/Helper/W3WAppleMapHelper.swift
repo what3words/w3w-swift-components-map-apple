@@ -471,20 +471,35 @@ public extension W3WAppleMapHelper {
 extension W3WAppleMapHelper {
   
   public func updateCamera(camera: W3WMapCamera?) {
-    
     W3WThread.runOnMain { [weak self] in
-      if let self = self {
-        if let center = camera?.center, let scale = camera?.scale {
-          let region = MKCoordinateRegion(center: center, span: scale.asSpan(mapSize: mapView!.frame.size , latitude: center.latitude ))
-          mapView?.setRegion(region, animated: true)
-          
-        } else if let center = camera?.center {
-          mapView?.setCenter(center, animated: true)
-          
-        } else if let scale = camera?.scale {
-          let region = MKCoordinateRegion(center: mapView!.centerCoordinate, span: scale.asSpan(mapSize: mapView!.frame.size, latitude: camera?.center?.latitude ?? 0.0))
-          mapView?.setRegion(region, animated: true)
-        }
+      guard let self,
+            let mapView else { return }
+
+      let center = camera?.center ?? mapView.centerCoordinate
+      let scale = camera?.scale
+      let span = scale?.asSpan(mapSize: mapView.frame.size, latitude: center.latitude)
+
+      // Check center validity
+      guard CLLocationCoordinate2DIsValid(center) else {
+        return
+      }
+
+      // Both center and scale available
+      if let span, span.latitudeDelta.isFinite, span.longitudeDelta.isFinite {
+        let region = MKCoordinateRegion(center: center, span: span)
+        mapView.setRegion(region, animated: true)
+
+      // Only center
+      } else if camera?.center != nil {
+        mapView.setCenter(center, animated: true)
+
+      // Only scale but span is valid
+      } else if let span, span.latitudeDelta.isFinite, span.longitudeDelta.isFinite {
+        let region = MKCoordinateRegion(center: mapView.centerCoordinate, span: span)
+        mapView.setRegion(region, animated: true)
+
+      } else {
+        // Do nothing
       }
     }
   }
