@@ -474,30 +474,26 @@ extension W3WAppleMapHelper {
     W3WThread.runOnMain { [weak self] in
       guard let self,
             let mapView else { return }
-
+      
       let center = camera?.center ?? mapView.centerCoordinate
       let scale = camera?.scale
-      let span = scale?.asSpan(mapSize: mapView.frame.size, latitude: center.latitude)
-
+      let span = scale?.asSpan(mapSize: mapView.frame.size,
+                               latitude: center.latitude)
+      
       // Check center validity
       guard CLLocationCoordinate2DIsValid(center) else {
         return
       }
-
-      // Both center and scale available
+      
+      // Center and span are available -> make a region
       if let span, span.latitudeDelta.isFinite, span.longitudeDelta.isFinite {
         let region = MKCoordinateRegion(center: center, span: span)
         mapView.setRegion(region, animated: true)
-
-      // Only center
+       
+      // No span -> no region -> move to center as a fallback option
       } else if camera?.center != nil {
         mapView.setCenter(center, animated: true)
-
-      // Only scale but span is valid
-      } else if let span, span.latitudeDelta.isFinite, span.longitudeDelta.isFinite {
-        let region = MKCoordinateRegion(center: mapView.centerCoordinate, span: span)
-        mapView.setRegion(region, animated: true)
-
+        
       } else {
         // Do nothing
       }
