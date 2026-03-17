@@ -71,19 +71,18 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     self.viewModel = viewModel
   }
   
-  public func set(type: String) {
+  public func set(type: W3WMapType) {
     w3wHelper.set(type: type)
   }
   
   public func getType() -> W3WMapType {
-    
     let type = w3wHelper.getType()
+
     switch type {
-    case .standard: return "standard"
-    case .satellite: return "satellite"
-    case .hybrid: return "hybridFlyover"
-      
-    default: return "hybridFlyover"
+      case .standard: return .standard
+      case .satellite: return .satellite
+      case .hybrid: return .hybrid
+      default: return .standard
     }
   }
   
