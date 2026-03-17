@@ -1,22 +1,13 @@
 {
-  "originHash" : "99c32a712676667ed5ab12dc5bf2960f71e70611de03347238eda66e64f361ef",
+  "originHash" : "99c82eff3b582324f237033662bc868bf4ad755d3211e468e253fce2eb45f5d7",
   "pins" : [
-    {
-      "identity" : "w3w-swift-app-events",
-      "kind" : "remoteSourceControl",
-      "location" : "git@github.com:w3w-internal/w3w-swift-app-events.git",
-      "state" : {
-        "revision" : "f9eb5e0ef166e6d056910b37e6516754a657470e",
-        "version" : "5.2.0"
-      }
-    },
     {
       "identity" : "w3w-swift-components-map",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:what3words/w3w-swift-components-map.git",
+      "location" : "https://github.com/what3words/w3w-swift-components-map.git",
       "state" : {
-        "revision" : "c26ebe3059f503c0545c7ad62b1573c79b61e8ce",
-        "version" : "1.0.0"
+        "branch" : "bug/mapscale-issue",
+        "revision" : "f49a5a5ed08eb39a9577282f3fb81ccecfe7bcbb"
       }
     },
     {
