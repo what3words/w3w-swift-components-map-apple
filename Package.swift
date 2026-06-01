@@ -14,9 +14,9 @@ let package = Package(
 
   dependencies: [
     .package(url: "https://github.com/what3words/w3w-swift-themes.git", "1.0.0"..<"2.0.0"),
-    .package(url: "https://github.com/what3words/w3w-swift-design.git", "1.0.0"..<"2.0.0"),
-    .package(url: "git@github.com:what3words/w3w-swift-components-map.git", branch: "main"),
-    .package(url: "https://github.com/what3words/w3w-swift-core.git", "1.0.0"..<"2.0.0")
+    .package(url: "https://github.com/what3words/w3w-swift-design.git", "1.3.0"..<"2.0.0"),
+    .package(url: "https://github.com/what3words/w3w-swift-components-map.git", "1.1.0"..<"2.0.0"),
+    .package(url: "https://github.com/what3words/w3w-swift-core.git", "1.3.0"..<"2.0.0")
   ],
 
   targets: [
@@ -28,7 +28,7 @@ let package = Package(
         .product(name: "W3WSwiftCore", package: "w3w-swift-core"),
         .product(name: "W3WSwiftDesign", package: "w3w-swift-design"),
         .product(name: "W3WSwiftComponentsMap", package: "w3w-swift-components-map"),
-        .product(name: "W3WSwiftThemes", package: "w3w-swift-themes")
+        .product(name: "W3WSwiftThemes", package: "w3w-swift-themes"),
       ]
     ),
     

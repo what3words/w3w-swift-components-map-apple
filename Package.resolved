@@ -1,13 +1,22 @@
 {
-  "originHash" : "2d2ff9066c4dc07bb0a0d8e58d69518e67d94b8d4e3545ed8609ccc5deddf020",
+  "originHash" : "79b40054841337b0449411dad4ebe40155abe4b843c847629d124e6963a0f15e",
   "pins" : [
+    {
+      "identity" : "w3w-swift-app-events",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/w3w-internal/w3w-swift-app-events.git",
+      "state" : {
+        "revision" : "af09db24311ca4dab2454398e4e5f07f86e41ff0",
+        "version" : "5.3.0"
+      }
+    },
     {
       "identity" : "w3w-swift-components-map",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:what3words/w3w-swift-components-map.git",
+      "location" : "https://github.com/what3words/w3w-swift-components-map.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "c311d5682e05f87a910955a8acc78a2e1104ee67"
+        "revision" : "df6ee7b48ea655496bf47f2aad432af38fd74700",
+        "version" : "1.1.0"
       }
     },
     {
@@ -15,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/what3words/w3w-swift-core.git",
       "state" : {
-        "revision" : "598fc648928208d9f0268680ce15b686329d12f9",
-        "version" : "1.1.2"
+        "revision" : "2725169511ecd21ba30d4613c5e3c5b79bd405f4",
+        "version" : "1.3.0"
       }
     },
     {
@@ -24,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/what3words/w3w-swift-design.git",
       "state" : {
-        "revision" : "ce6b9c951d1526915d484c7d723298a0ea3654ca",
-        "version" : "1.0.8"
+        "revision" : "701ba8136c66f67f0fc3c2778f825ac12d0e0100",
+        "version" : "1.3.0"
       }
     },
     {
@@ -33,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/what3words/w3w-swift-themes.git",
       "state" : {
-        "revision" : "718555fc83d5745724a222c6ba39add74e0d345e",
-        "version" : "1.2.2"
+        "revision" : "bf6fd677b3ce16e81952ffea3627ffa534e5c5c7",
+        "version" : "1.5.0"
       }
     }
   ],
