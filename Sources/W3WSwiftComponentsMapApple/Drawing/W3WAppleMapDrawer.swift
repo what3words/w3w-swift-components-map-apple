@@ -684,8 +684,8 @@ extension W3WAppleMapDrawerProtocol {
       
       // else if the square has coordinates but no words
     } else if square.words == nil {
-      if let coordinates = square.coordinates {
-        self.mapGridData?.w3w?.convertTo3wa(coordinates: coordinates, language: self.mapGridData?.language ?? W3WSettings.defaultLanguage ) { result, error in
+      if let coordinates = square.coordinates, let language = self.mapGridData?.language.toW3wLanguage() {
+        self.mapGridData?.w3w?.convertTo3wa(coordinates: coordinates, language: language) { result, error in
           //  self.errorHandler(error: error)
           completion(result)
         }
@@ -823,7 +823,7 @@ extension W3WAppleMapDrawerProtocol {
     W3WThread.runOnMain {
       if let c = coordinates {
         // self.checkConfiguration()
-        self.mapGridData?.w3w?.convertTo3wa(coordinates: c, language: self.mapGridData?.language ?? W3WSettings.defaultLanguage) { square, error in
+        self.mapGridData?.w3w?.convertTo3wa(coordinates: c, language: self.mapGridData?.language.toW3wLanguage() ?? W3WSettings.defaultLanguage) { square, error in
           //  self.dealWithAnyApiError(error: error)
           if let s = square {
             self.addMarker(at: s, color: color, type: type, completion: completion)
