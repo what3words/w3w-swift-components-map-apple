@@ -42,7 +42,7 @@ public class W3WAppleMapGridData {
   var w3w: W3WProtocolV4?
   
   /// language to use currently
-  var language: W3WLanguage = W3WSettings.defaultLanguage
+  var language: any W3WRfcLanguageProtocol = W3WRfcLanguage.default
   
   /// highighted individual squares on the map
   var squares = [W3WSquare]()
@@ -90,7 +90,7 @@ public class W3WAppleMapGridData {
   
   var gridUpdateDebouncer = W3WDebouncer<Void>(delay: 0.3, closure: { _ in })
   
-  public init(w3w: W3WProtocolV4, scheme: W3WScheme? = .w3w, language: W3WLanguage = W3WSettings.defaultLanguage) {
+  public init(w3w: W3WProtocolV4, scheme: W3WScheme? = .w3w, language: any W3WRfcLanguageProtocol = W3WRfcLanguage.default) {
     
     self.w3w = w3w
     self.scheme = scheme
@@ -138,7 +138,7 @@ public class W3WAppleMapGridData {
     self.scheme = scheme
   }
   
-  public func set(language: W3WLanguage) {
+  public func set(language: any W3WRfcLanguageProtocol) {
     self.language = language
   }
   

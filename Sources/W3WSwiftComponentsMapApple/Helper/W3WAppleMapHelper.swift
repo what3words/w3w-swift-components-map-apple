@@ -45,7 +45,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
     }
   }
   
-  public var language: W3WLanguage = W3WSettings.defaultLanguage
+  public var language: any W3WRfcLanguageProtocol = W3WRfcLanguage.default
   
   
   /// called when the user taps a square in the map
@@ -58,7 +58,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   
   public private(set) var markers: [W3WSquare] = []
   
-  public init(mapView: MKMapView, _ w3w: W3WProtocolV4, language: W3WLanguage = W3WSettings.defaultLanguage ) {
+  public init(mapView: MKMapView, _ w3w: W3WProtocolV4, language: any W3WRfcLanguageProtocol = W3WRfcLanguage.default) {
     self.mapView = mapView
     self.w3w = w3w
     super.init()
@@ -91,7 +91,7 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
     self.mapView?.showsUserLocation = true
   }
   
-  public func set(language: W3WLanguage) {
+  public func set(language: any W3WRfcLanguageProtocol) {
     self.language = language
   }
   
@@ -616,9 +616,9 @@ extension W3WAppleMapHelper {
     }
   }
   
-  public func convertTo3wa(coordinates: CLLocationCoordinate2D, language: W3WLanguage = W3WBaseLanguage.english, completion: @escaping W3WSquareResponse ) {
-    
-    self.w3w.convertTo3wa(coordinates: coordinates, language: language) { [weak self]  square, error in
+  public func convertTo3wa(coordinates: CLLocationCoordinate2D, language: any W3WRfcLanguageProtocol = W3WRfcLanguage.default, completion: @escaping W3WSquareResponse) {
+
+    self.w3w.convertTo3wa(coordinates: coordinates, language: language.toW3wLanguage() ?? W3WBaseLanguage.english) { [weak self]  square, error in
       guard self != nil else { return }
       
       if let error = error {
