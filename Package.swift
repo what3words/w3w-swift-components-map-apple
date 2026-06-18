@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
   name: "w3w-swift-components-map-apple",
   
-  platforms: [.iOS(.v13)],
+  platforms: [.iOS("16.1")],
 
   products: [
     .library(name: "W3WSwiftComponentsMapApple", targets: ["W3WSwiftComponentsMapApple"]),
