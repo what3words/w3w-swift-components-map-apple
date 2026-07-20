@@ -95,13 +95,12 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
     self.language = language
   }
   
-  public func set(type: String) {
+  public func set(type: W3WMapType) {
     switch type {
-    case "standard":         self.mapType = .standard
-    case "hybrid":           self.mapType = .hybrid
-    case "satellite":        self.mapType = .satellite
-      
-    default:                  self.mapType = .standard
+      case .standard:  self.mapType = .standard
+      case .hybrid:    self.mapType = .hybrid
+      case .satellite: self.mapType = .satellite
+      default:         self.mapType = .standard
     }
   }
   
@@ -111,11 +110,10 @@ public class W3WAppleMapHelper: NSObject, W3WAppleMapDrawerProtocol, W3WAppleMap
   
   public func getType() -> W3WMapType {
     switch  self.mapType {
-    case .standard: return "standard"
-    case .satellite: return "satellite"
-    case .hybrid: return "hybridFlyover"
-      
-    default: return "hybridFlyover"
+      case .standard: return .standard
+      case .satellite: return .satellite
+      case .hybrid: return .hybrid
+      default: return .standard
     }
   }
   

@@ -71,26 +71,24 @@ public class W3WAppleMapView: MKMapView, UIGestureRecognizerDelegate, W3WMapView
     self.viewModel = viewModel
   }
   
-  public func set(type: String) {
+  public func set(type: W3WMapType) {
     w3wHelper.set(type: type)
   }
   
   public func getType() -> W3WMapType {
-    
     let type = w3wHelper.getType()
+
     switch type {
-    case .standard: return "standard"
-    case .satellite: return "satellite"
-    case .hybrid: return "hybridFlyover"
-      
-    default: return "hybridFlyover"
+      case .standard: return .standard
+      case .satellite: return .satellite
+      case .hybrid: return .hybrid
+      default: return .standard
     }
   }
   
   public func getCameraState() -> W3WMapCamera {
     let mapView = w3wHelper.mapView
-    return
-     W3WMapCamera(center: mapView?.region.center, scale: W3WMapScale(span: mapView!.region.span  , mapSize: mapView!.frame.size))
+    return W3WMapCamera(center: mapView?.region.center, scale: W3WMapScale(span: mapView!.region.span  , mapSize: mapView!.frame.size, centerLatitude: mapView?.centerCoordinate.latitude ?? 0.0))
   }
   
   public func set(scheme: W3WScheme?) {
@@ -190,7 +188,7 @@ extension W3WAppleMapView: MKMapViewDelegate {
   
   // MARK: UIMapViewDelegates
   public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-    let currentMapScale = W3WMapScale(span: mapView.region.span, mapSize: mapView.frame.size)
+    //let currentMapScale = W3WMapScale(span: mapView.region.span, mapSize: mapView.frame.size, centerLatitude: mapView.centerCoordinate.latitude ?? 0.0)
 
     w3wHelper.mapViewDidChangeVisibleRegion(mapView)
     viewModel.output.send(.camera(getCameraState()))

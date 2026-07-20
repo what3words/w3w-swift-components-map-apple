@@ -1,13 +1,13 @@
 {
-  "originHash" : "79b40054841337b0449411dad4ebe40155abe4b843c847629d124e6963a0f15e",
+  "originHash" : "a6cc2b9df810b3ae5f152e4a1b4509e7315aa5086f60252571629b71ff816467",
   "pins" : [
     {
       "identity" : "w3w-swift-app-events",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/w3w-internal/w3w-swift-app-events.git",
       "state" : {
-        "revision" : "af09db24311ca4dab2454398e4e5f07f86e41ff0",
-        "version" : "5.3.0"
+        "revision" : "7e2641ee5064aec58e7f1d9d75b1e25b926b046e",
+        "version" : "5.4.1"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/what3words/w3w-swift-components-map.git",
       "state" : {
-        "revision" : "df6ee7b48ea655496bf47f2aad432af38fd74700",
-        "version" : "1.1.0"
+        "revision" : "fd2f6aeff5bce749fd454d6e7f2ef345adc2e43d",
+        "version" : "1.2.0"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/what3words/w3w-swift-core.git",
       "state" : {
-        "revision" : "2725169511ecd21ba30d4613c5e3c5b79bd405f4",
-        "version" : "1.3.0"
+        "revision" : "72813428f5fe53bf4c0d431a8f90c09f5736e189",
+        "version" : "1.4.0"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/what3words/w3w-swift-themes.git",
       "state" : {
-        "revision" : "bf6fd677b3ce16e81952ffea3627ffa534e5c5c7",
-        "version" : "1.5.0"
+        "revision" : "c6249273234f554a452e69ee06d2825d60c7c838",
+        "version" : "1.4.0"
       }
     }
   ],

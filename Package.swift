@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
   name: "w3w-swift-components-map-apple",
   
-  platforms: [.iOS("16.1")],
+  platforms: [.iOS(.v13)],
 
   products: [
     .library(name: "W3WSwiftComponentsMapApple", targets: ["W3WSwiftComponentsMapApple"]),
@@ -14,9 +14,9 @@ let package = Package(
 
   dependencies: [
     .package(url: "https://github.com/what3words/w3w-swift-themes.git", "1.0.0"..<"2.0.0"),
-    .package(url: "https://github.com/what3words/w3w-swift-design.git", "1.3.0"..<"2.0.0"),
-    .package(url: "https://github.com/what3words/w3w-swift-components-map.git", "1.1.0"..<"2.0.0"),
-    .package(url: "https://github.com/what3words/w3w-swift-core.git", "1.3.0"..<"2.0.0")
+    .package(url: "https://github.com/what3words/w3w-swift-design.git", "1.0.0"..<"2.0.0"),
+    .package(url: "https://github.com/what3words/w3w-swift-components-map.git", "1.0.0"..<"2.0.0"),
+    .package(url: "https://github.com/what3words/w3w-swift-core.git", "1.0.0"..<"2.0.0")
   ],
 
   targets: [
