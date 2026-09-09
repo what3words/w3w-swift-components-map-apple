@@ -468,6 +468,17 @@ public extension W3WAppleMapHelper {
 
 extension W3WAppleMapHelper {
   
+  /// Whether MKMapView can express this region: finite positive deltas that stay inside
+  /// the coordinate space once the region is centred. Anything else makes setRegion throw.
+  static func isExpressible(_ region: MKCoordinateRegion) -> Bool {
+    let span = region.span
+    guard span.latitudeDelta.isFinite, span.longitudeDelta.isFinite,
+          span.latitudeDelta > 0, span.longitudeDelta > 0,
+          span.latitudeDelta <= 180, span.longitudeDelta <= 360,
+          CLLocationCoordinate2DIsValid(region.center) else { return false }
+    return abs(region.center.latitude) + span.latitudeDelta / 2 <= 90
+  }
+
   public func updateCamera(camera: W3WMapCamera?) {
     W3WThread.runOnMain { [weak self] in
       guard let self,
@@ -484,9 +495,30 @@ extension W3WAppleMapHelper {
       }
       
       // Center and span are available -> make a region
-      if let span, span.latitudeDelta.isFinite, span.longitudeDelta.isFinite {
-        let region = MKCoordinateRegion(center: center, span: span)
-        mapView.setRegion(region, animated: true)
+      if let span, span.latitudeDelta.isFinite, span.longitudeDelta.isFinite,
+         span.latitudeDelta > 0, span.longitudeDelta > 0 {
+        // MKMapView widens the requested span to the view's aspect ratio before applying
+        // it, and throws "Invalid Region" if the result runs past a pole — so a span that
+        // is finite and well under 180 here can still be rejected. A scale low enough to
+        // ask for a world view is the case that does it: on a portrait view a 105° square
+        // span is widened to 203° of latitude, which no region can express.
+        //
+        // The request is clamped for that widening, but the widening factor is not a
+        // documented contract, so the clamp is not trusted on its own: the region MapKit
+        // says it would use is checked before it is handed over, and a region that still
+        // cannot be expressed moves the centre instead of throwing.
+        let aspectRatio = max(mapView.frame.height / max(mapView.frame.width, 1), 1)
+        let poleLimitedDelta = min(180.0, 2 * (90 - abs(center.latitude)))
+        let candidate = MKCoordinateRegion(
+          center: center,
+          span: MKCoordinateSpan(latitudeDelta: min(span.latitudeDelta, poleLimitedDelta / aspectRatio),
+                                 longitudeDelta: min(span.longitudeDelta, 360)))
+        let fitted = mapView.regionThatFits(candidate)
+        if Self.isExpressible(fitted) {
+          mapView.setRegion(fitted, animated: true)
+        } else {
+          mapView.setCenter(center, animated: true)
+        }
        
       // No span -> no region -> move to center as a fallback option
       } else if camera?.center != nil {
